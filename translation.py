@@ -30,12 +30,13 @@ print(
 )
 
 # В функции translate_text() включите аугментацию данных и fine-tuning для улучшения обработки естественного языка
-def translate_text(model, tokenizer, text, target_language="en", src_language="ru"):
+def translate_text(model, tokenizer, text, target_language, src_language, max_length=512):
     if not isinstance(text, str):
         raise ValueError("Input text must be a string")
 
     try:
         inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        tokens = tokenizer(text, truncation=True, max_length=max_length, padding="max_length", return_tensors="pt")
         inputs = {key: tensor.to(device) for key, tensor in inputs.items()}
         outputs = model.generate(**inputs, max_length=1024, do_sample=True)
         translated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
