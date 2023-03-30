@@ -7,7 +7,7 @@ from translation import load_translation_models, translate_text
 from models import select_main_model, ensemble_predictions, generate_response
 from utils import check_model_files, clean_text, process_user_input
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
-from resource_manager import enable_memory_growth, get_tokenizer_and_model, clear_model
+from resource_manager import enable_memory_growth, get_tokenizer_and_model, clear_model, get_models_list
 
 translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
@@ -30,9 +30,17 @@ print("Загрузка моделей...")
 # Загрузка основных моделей
 for i in range(2):
     model_numbers = []
+    models_list = [
+    "bert-base-uncased",
+    "roberta-base",
+    "gpt2",
+    "rubert_cased_L-12_H-768_A-12_v2",
+    "transfo-xl-wt103",
+    "gpt-neo-2.7B",
+    ]
     # model_number = input(f"Введите номер основной модели {i + 1}: ")
     # model_numbers.append(model_number)
-    model_names = [model_name_list[int(model_number) - 1] for model_number in model_numbers]
+    model_names = [model_list[int(model_number) - 1] for model_number in model_numbers]
     tokenizers, models = get_tokenizer_and_model(model_names)
     main_model_name, main_tokenizer_name = select_main_model(model_number)
     main_model, main_tokenizer = load_main_model(main_model_name, main_tokenizer_name)

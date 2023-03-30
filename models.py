@@ -11,6 +11,7 @@ def select_main_model(model_number):
         "3": ("gpt2", "GPT2"),
         "4": ("rubert_cased_L-12_H-768_A-12_v2", "RuBert"),
         "5": ("transfo-xl-wt103", "TransformerXL"),
+        "6": ("gpt-neo-2.7B", "EleutherAI"")
         # Добавьте здесь строки для GPT-3.5 и GPT-4
     }
 

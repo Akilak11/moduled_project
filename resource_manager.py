@@ -4,6 +4,18 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 model_cache = {}
 
+
+def get_models_list():
+    return [
+        "bert-base-uncased",
+        "roberta-base",
+        "gpt2",
+        "rubert_cased_L-12_H-768_A-12_v2",
+        "transfo-xl-wt103",
+        "gpt-neo-2.7B",
+    ]
+
+
 def enable_memory_growth():
     gpu_devices = tf.config.experimental.list_physical_devices("GPU")
     for device in gpu_devices:
@@ -26,4 +38,5 @@ def get_tokenizer_and_model(model_names):
 def clear_models(models):
     for model in models:
         del model
-    torch.cuda.empty_cache()  # Если вы используете GPU
+        
+torch.cuda.empty_cache()  # Если вы используете GPU
