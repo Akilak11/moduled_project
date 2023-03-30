@@ -33,13 +33,6 @@ def check_model_files(model_name, model_directory):
         return False
 
     return True
-    
-# Функция для очистки текста с использованием регулярных выражений
-def clean_text(text):
-    cleaned_text = re.sub(r"[^а-яА-ЯёЁa-zA-Z0-9\s\.,!?;:(){}\[\]<>+=\-/\\*%|&'\"_]", " ", text)
-    cleaned_text = re.sub(r"\s+", " ", cleaned_text).strip()
-    return cleaned_text
-
 
 def load_main_model(main_model_name, main_tokenizer_name):
     main_model = AutoModelForCausalLM.from_pretrained(main_model_name).to(device)
