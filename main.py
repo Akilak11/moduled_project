@@ -1,3 +1,8 @@
+import os
+import platform
+import sys
+from colorama import init, Fore
+init()
 from translation import load_translation_models, translate_text
 from models import select_main_model, ensemble_predictions, generate_response
 from utils import check_model_files, clean_text, process_user_input
@@ -12,15 +17,32 @@ weights = [1.0, 0.8]
 num_beams = 5
 temperature = 1.0
 
+print("system_info: CPU = {}, RAM = {} GB, OS = {}, Python = {}".format(
+    platform.processor(),
+    round(os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / (1024 ** 3), 2),
+    platform.system(),
+    sys.version
+))
+
+print("Загрузка моделей...")
+
+
 # Загрузка основных моделей
 for i in range(2):
-    model_number = input(f"Введите номер основной модели {i + 1}: ")
+    model_numbers = []
+    # model_number = input(f"Введите номер основной модели {i + 1}: ")
+    # model_numbers.append(model_number)
     model_names = [model_name_list[int(model_number) - 1] for model_number in model_numbers]
     tokenizers, models = get_tokenizer_and_model(model_names)
     main_model_name, main_tokenizer_name = select_main_model(model_number)
     main_model, main_tokenizer = load_main_model(main_model_name, main_tokenizer_name)
     models.append(main_model)
     tokenizers.append(main_tokenizer)
+
+print("Модели успешно загружены.")
+
+print(Fore.GREEN + "Вопрос пользователя: " + Fore.RESET)
+# Ваш код для обработки вопроса
 
 # В функции process_user_input() добавьте обработку ошибок и ограничения на длину текста
 def process_user_input(
@@ -80,6 +102,9 @@ def process_user_input(
 
     print(f"Не удалось обработать текст. Пожалуйста, попробуйте еще раз.")
     return ""
+    
+print(Fore.MAGENTA + "Ответ модели: " + Fore.RESET)
+# Ваш код для вывода ответа модели
 
 def main():
     translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()

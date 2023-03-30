@@ -1,0 +1,11 @@
+main: seed = 1680193692
+llama_model_load: loading model from 'gpt4all-lora-quantized.bin' - please wait ...
+llama_model_load: ggml ctx size = 6065.35 MB
+llama_model_load: memory_size =  2048.00 MB, n_mem = 65536
+llama_model_load: loading model part 1/1 from 'gpt4all-lora-quantized.bin'
+llama_model_load: .................................... done
+llama_model_load: model size =  4017.27 MB / num tensors = 291
+
+system_info: n_threads = 4 / 12 | AVX = 1 | AVX2 = 1 | AVX512 = 0 | FMA = 1 | NEON = 0 | ARM_FMA = 0 | F16C = 1 | FP16_VA = 0 | WASM_SIMD = 0 | BLAS = 0 | SSE3 = 1 | VSX = 0 |
+main: interactive mode on.
+sampling parameters: temp = 0.100000, top_k = 40, top_p = 0.950000, repeat_last_n = 64, repeat_penalty = 1.300000
