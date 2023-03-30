@@ -15,6 +15,8 @@ temperature = 1.0
 # Загрузка основных моделей
 for i in range(2):
     model_number = input(f"Введите номер основной модели {i + 1}: ")
+    model_names = [model_name_list[int(model_number) - 1] for model_number in model_numbers]
+    tokenizers, models = get_tokenizer_and_model(model_names)
     main_model_name, main_tokenizer_name = select_main_model(model_number)
     main_model, main_tokenizer = load_main_model(main_model_name, main_tokenizer_name)
     models.append(main_model)
@@ -139,7 +141,8 @@ def main():
             print(f"Ответ: {response}")
     else:
         print("Не выбран номер модели. Повторите попытку.")
-
+    # Удалите модели после использования
+    clear_models(models)
 if __name__ == "__main__":
     enable_memory_growth()
     main()
