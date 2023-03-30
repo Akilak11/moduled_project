@@ -2,6 +2,7 @@ from translation import load_translation_models, translate_text
 from models import select_main_model, ensemble_predictions, generate_response
 from utils import check_model_files, clean_text, process_user_input
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
+from resource_manager import enable_memory_growth, get_tokenizer_and_model, clear_model
 
 translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
@@ -140,5 +141,6 @@ def main():
         print("Не выбран номер модели. Повторите попытку.")
 
 if __name__ == "__main__":
+    enable_memory_growth()
     main()
 
