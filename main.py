@@ -1,9 +1,14 @@
+# Стандартные библиотеки
 import os
-import platform
 import sys
+
+# Сторонние библиотеки
+import platform
 from colorama import init, Fore
 init()
 from translation import load_translation_models, translate_text
+
+# Локальные модули
 from models import select_main_model, ensemble_predictions, generate_response
 from utils import check_model_files, load_main_model
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
