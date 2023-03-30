@@ -1,6 +1,23 @@
 from translation import load_translation_models, translate_text
 from models import select_main_model, ensemble_predictions, generate_response
-from utils import check_model_files, clean_text
+from utils import check_model_files, clean_text, process_user_input
+from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
+
+translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
+
+# Инициализация параметров моделей
+models, tokenizers = [], []
+weights = [1.0, 0.8]
+num_beams = 5
+temperature = 1.0
+
+# Загрузка основных моделей
+for i in range(2):
+    model_number = input(f"Введите номер основной модели {i + 1}: ")
+    main_model_name, main_tokenizer_name = select_main_model(model_number)
+    main_model, main_tokenizer = load_main_model(main_model_name, main_tokenizer_name)
+    models.append(main_model)
+    tokenizers.append(main_tokenizer)
 
 # В функции process_user_input() добавьте обработку ошибок и ограничения на длину текста
 def process_user_input(
@@ -12,9 +29,9 @@ def process_user_input(
     back_translation_model,
     back_translation_tokenizer,
     weights,
-    user_language="ru",
-    max_length=512,
-    max_retries=3,
+    user_language="ru", # добавить параметр языка ввода
+    max_length=512,     # добавить параметр максимальной длины ввода
+    max_retries=3,      # добавить параметр максимального количества попыток перевода или генерации текста
     num_beams=5,
     temperature=1.0
 ):
@@ -85,10 +102,10 @@ def main():
             response = process_user_input(
                 cleaned_user_prompt,  # Передаем очищенный текст
             # ... (остальные аргументы функции process_user_input)
-        )
-        cleaned_response = clean_text(response)  # Очищаем сгенерированный текст
-        print(f"Ответ: {cleaned_response}")
-            
+            )
+            cleaned_response = clean_text(response)  # Очищаем сгенерированный текст
+            print(f"Ответ: {cleaned_response}")
+
             if user_prompt.lower() == "сохранить модели":
                 directory = input("Введите директорию для сохранения: ")
                 save_models_and_tokenizers(
@@ -114,6 +131,9 @@ def main():
                 translation_tokenizer,
                 back_translation_model,
                 back_translation_tokenizer,
+                user_language="ru",
+                max_length=512,
+                max_retries=3,
             )
             print(f"Ответ: {response}")
     else:
@@ -121,3 +141,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
