@@ -19,8 +19,22 @@ def load_translation_models():
 
 translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
+import cpuinfo
+
+# Получить информацию о процессоре
+info = cpuinfo.get_cpu_info()
+
+# Получить информацию о поддержке инструкций процессора
+sse2_supported = 'sse2' in info.get('flags', '')
+avx_supported = 'avx' in info.get('flags', '')
+avx2_supported = 'avx2' in info.get('flags', '')
+fma_supported = 'fma' in info.get('flags', '')
+
+print(info)
+
+
 # Выводим список моделей в одном вызове функции print()
-print(
+'''print(
     "Выберите модель:\n"
     "1. bert-base-uncased\n"
     "2. roberta-base\n"
@@ -28,6 +42,7 @@ print(
     "4. rubert_cased_L-12_H-768_A-12_v2\n"
     "5. transfo-xl-wt103"
 )
+'''
 
 # В функции translate_text() включите аугментацию данных и fine-tuning для улучшения обработки естественного языка
 def translate_text(model, tokenizer, text, target_language, src_language, max_length=512):
@@ -47,3 +62,15 @@ def translate_text(model, tokenizer, text, target_language, src_language, max_le
     return translated_text
 
 # Используйте функцию ensemble_predictions() для объединения предсказаний от разных моделей с учетом весов
+
+def ensemble_predictions(predictions, weights):
+    if len(predictions) != len(weights):
+        raise ValueError("Количество предсказаний и весов должно совпадать")
+
+    for weight in weights:
+        if weight < 0:
+            raise ValueError("Веса должны быть неотрицательными")
+
+    ensemble_prediction = sum(prediction * weight for prediction, weight in zip(predictions, weights)) / sum(weights)
+    return ensemble_prediction
+

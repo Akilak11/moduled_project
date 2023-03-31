@@ -16,6 +16,9 @@ def select_main_model(model_number):
         # Добавьте здесь строки для GPT-3.5 и GPT-4
     }
 
+# Показываем какие модели используются в проекте
+    print(models)
+
     model_name, model_class_name = models.get(str(model_number), (None, None))
 
     if model_name is None:
@@ -26,7 +29,7 @@ def select_main_model(model_number):
     main_tokenizer = tokenizer_class.from_pretrained(model_name)
     main_tokenizer.pad_token = main_tokenizer.eos_token # Устанавливаем pad_token равным eos_token
     return model_name, main_tokenizer
-    
+
 # Загрузите GPT-3.5 и GPT-4 модели и включите их в список моделей
 model1_name = "EleutherAI/gpt-neo-2.7B"  # Имя модели GPT-3.5
 model1 = AutoModelForCausalLM.from_pretrained(model1_name).to(device)
@@ -53,29 +56,13 @@ def ensemble_predictions(predictions, weights):
     return ensemble_prediction
     
 # В функции generate_response() добавьте параметры, такие как num_beams и temperature, для управления генерацией текста
-def generate_response(models, tokenizers, user_prompt, weights, num_beams=5, temperature=1.0):
-    max_length = 1024
+def generate_response_with_pipeline(models, tokenizers, user_prompt, weights, num_beams=5, temperature=1.0, **kwargs):
     predictions = []
-    
-    for model, tokenizer, weight in zip(models, tokenizers, weights):
-        inputs = tokenizer(user_prompt, return_tensors='pt', padding=True, truncation=True)
-        input_ids = inputs['input_ids'].to(device)
-        attention_mask = inputs['attention_mask'].to(device)
 
-        # Generate a response for each model
-        outputs = model.generate(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            max_length=max_length,
-            num_beams=num_beams,
-            temperature=temperature * weight,  # Учитываем вес модели в параметре temperature
-            early_stopping=True,
-        )
-        prediction = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    for model, tokenizer, weight in zip(models, tokenizers, weights):
+        generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=0, num_beams=num_beams, max_length=1024, temperature=temperature * weight, **kwargs)
+        prediction = generator(user_prompt)[0]['generated_text']
         predictions.append(prediction)
 
-    # Combine the predictions using a simple voting scheme: выбираем наиболее часто встречающийся ответ
     response = max(set(predictions), key=predictions.count)
     return response
-    
-    ########################################################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$AAAAAAAAAAAAAAAAAAAAAAAAAAAПАМАГИТЕ

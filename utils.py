@@ -4,6 +4,8 @@ import requests
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+#Функция check_model_files принимает имя модели и директорию, в которой хранятся файлы модели, и проверяет, доступны ли эти файлы на сервере Hugging Face и имеют ли они такой же размер, как и локальные файлы на диске. 
+#Если проверка не пройдена, функция возвращает False, в противном случае - True.
 def check_model_files(model_name, model_directory):
     config_url = f"https://huggingface.co/{model_name}/resolve/main/config.json"
     model_url = f"https://huggingface.co/{model_name}/resolve/main/pytorch_model.bin"
@@ -34,6 +36,8 @@ def check_model_files(model_name, model_directory):
 
     return True
 
+#Функция load_main_model принимает имя основной модели и имя токенизатора, и загружает модель и токенизатор с помощью Hugging Face Transformers.
+#Модель затем отправляется на устройство, доступное для выполнения (GPU или CPU).
 def load_main_model(main_model_name, main_tokenizer_name):
     main_model = AutoModelForCausalLM.from_pretrained(main_model_name).to(device)
     main_tokenizer = AutoTokenizer.from_pretrained(main_tokenizer_name)
