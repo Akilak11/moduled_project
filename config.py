@@ -1,5 +1,6 @@
 #модуль config.py
 import os
+import torch
 from pathlib import Path
 
 # Директории
@@ -38,6 +39,14 @@ MODEL_PATHS = {
     "model3": MYTRAIN_MODELS_DIR / "model3"
 }
 
+# Hardware parameters
+USE_GPU = torch.cuda.is_available()
+DEVICE = torch.device("cuda" if USE_GPU else "cpu")
+NUM_WORKERS = os.cpu_count()
+
+# Print information
+print(f"Using device: {DEVICE}")
+print(f"Number of workers: {NUM_WORKERS}")
 
 '''Примеры других config.py
 -------------------------------------------------------------------------------------------------------------------------------------------------

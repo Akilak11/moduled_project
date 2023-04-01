@@ -11,7 +11,7 @@ from generate_response import generate_response_with_pipeline, ensemble_predicti
 from utils import check_model_files
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
 from resource_manager import enable_memory_growth, get_tokenizer_and_model, clear_model, get_models_list
-from text_processing import clean_text
+from text_processing import clean_text, validate_input
 from translation import translate_text
 from user_interface import user_interface
 

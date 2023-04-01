@@ -48,12 +48,17 @@ def user_interface(device):
 
         user_choice = input("Введите номер опции: ")
 
-        if user_choice == "1":
-            user_input = input("Введите ваш вопрос: ")
-            if user_input.lower() == "exit":
-                print("Спасибо за использование нашей системы. До свидания!")
-                break
+            if user_choice == "1":
+                user_input = input("Введите ваш вопрос: ")
+                if user_input.lower() == "exit":
+                    print("Спасибо за использование нашей системы. До свидания!")
+                    break
             else:
+                if not validate_input(user_input, min_length=1, max_length=512):
+                    print("Ошибка: Ввод не соответствует заданным критериям.")
+                    print("Пожалуйста, введите вопрос длиной от 1 до 512 символов.")
+                    continue
+                
                 user_prompt = clean_text(user_input)
                 user_prompt = separate_code_and_explanations(user_prompt)
                 user_prompt = combine_code_and_translated_explanations(user_prompt)
