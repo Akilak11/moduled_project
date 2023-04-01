@@ -1,3 +1,6 @@
+import re
+from typing import Tuple
+
 # Функция separate_code_and_explanations принимает сгенерированный код и возвращает два списка: список строк с кодом и список строк с объяснениями, начинающихся с символа #.
 def separate_code_and_explanations(generated_code):
     lines = generated_code.split("\n")

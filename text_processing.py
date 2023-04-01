@@ -1,4 +1,5 @@
 import re
+from code_processing.py import separate_code_and_explanations, combine_code_and_translated_explanations
 from typing import Tuple
 
 #Функция принимает строку текста и заменяет все символы, кроме букв, цифр и некоторых знаков препинания, на пробелы. Затем она удаляет лишние пробелы в тексте и возвращает очищенный текст.

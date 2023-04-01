@@ -7,8 +7,6 @@ import torch
 import platform
 from colorama import init, Fore
 
-
-
 from load_models import load_main_model, load_translation_models
 # Импорт локальных модулей
 from generate_response import generate_response_with_pipeline, generate_response, ensemble_predictions
