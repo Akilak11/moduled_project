@@ -2,45 +2,51 @@
 from transformers import pipeline
 from load_models import load_main_model
 from text_processing import clean_text, validate_input
-from text_generator import text_generator
-from translation_models import back_translate_text, translate_text
+from text_generator import TextGenerator
+from translation_models import TranslationModel
+from translation import TranslationService
+
+# Создание экземпляров TranslationService, TextGenerator и TranslationModel
+translation_service = TranslationService("Helsinki-NLP/opus-mt-en-ru", "cuda")
+text_generator_instance = TextGenerator("Your_Encoder_Model_Name", "Your_Decoder_Model_Name", "cuda")
+back_translation_model = TranslationModel(BACK_TRANSLATION_MODEL_NAME, DEVICE)
 
 def generate_response(user_prompt: str, model_name: str, ensemble: bool = False,
                       back_translate: bool = False, num_beams=5, temperature=1.0,
                       use_encoder_decoder: bool = False, **kwargs):
-    # Validate input
+    # Проверка ввода
     if not validate_input(user_prompt):
         return "Пожалуйста, введите корректный текст."
 
-    # Clean text
+    # Очистка текста
     cleaned_text = clean_text(user_prompt)
 
-    # Translation
+    # Обратный перевод
     if back_translate:
-        cleaned_text = back_translate_text(cleaned_text)
+        cleaned_text = back_translation_model.back_translate(cleaned_text)  # Использование экземпляра TranslationModel
 
-    # Generate response
+    # Генерация ответа
     if use_encoder_decoder:
-        response = text_generator(cleaned_text)
+        response = text_generator_instance(cleaned_text)  # Использование экземпляра TextGenerator
     else:
         response = generate_response_with_pipeline(model_name, cleaned_text, num_beams, temperature, **kwargs)
 
-    # Translation
+    # Перевод ответа
     if back_translate:
-        response = translate_text(response)
+        response = translation_service(response, max_length=512)  # Использование экземпляра TranslationService
 
-    # Ensemble predictions
+    # Ансамбль предсказаний
     if ensemble:
         predictions = [response]
         weights = [1.0]
 
         if back_translate:
-            translated_response = translate_text(response)
+            translated_response = translation_service(response, max_length=512)  # Использование экземпляра TranslationService
             predictions.append(translated_response)
             weights.append(0.5)
 
         if use_encoder_decoder:
-            encoder_decoder_response = text_generator(clean_text(response))
+            encoder_decoder_response = text_generator_instance(clean_text(response))  # Использование экземпляра TextGenerator
             predictions.append(encoder_decoder_response)
             weights.append(0.5)
 
@@ -48,38 +54,10 @@ def generate_response(user_prompt: str, model_name: str, ensemble: bool = False,
 
     return response
 
-
-
-'''
-каким образом теперь лучше всего включить код с translation_models.py в generate_response.py
-предложи обновленный вариант код, с улучшениями, но важно, без потери функциональности предыдущего, предложи готовый код с комментариями на русском языке
-
-from transformers import pipeline
-from load_models import load_main_model
-from text_processing import clean_text, validate_input
-from text_generator import text_generator
-
 def generate_response_with_pipeline(model_name, user_prompt, num_beams=5, temperature=1.0, **kwargs):
     model, tokenizer = load_main_model(model_name)
     generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=0, num_beams=num_beams, max_length=1024, temperature=temperature, **kwargs)
     response = generator(user_prompt)[0]['generated_text']
-    return response
-
-def generate_response(user_prompt: str, model_name: str, ensemble: bool = False,
-                      back_translate: bool = False, num_beams=5, temperature=1.0,
-                      use_encoder_decoder: bool = False, **kwargs):
-    # Validate input
-    if not validate_input(user_prompt):
-        return "Пожалуйста, введите корректный текст."
-
-    # Clean text
-    cleaned_text = clean_text(user_prompt)
-
-    if use_encoder_decoder:
-        response = text_generator(cleaned_text)
-    else:
-        response = generate_response_with_pipeline(model_name, cleaned_text, num_beams, temperature, **kwargs)
-
     return response
 
 def ensemble_predictions(predictions, weights):
@@ -90,7 +68,4 @@ def ensemble_predictions(predictions, weights):
         if weight < 0:
             raise ValueError("Веса должны быть неотрицательными")
 
-    ensemble_prediction = sum(prediction * weight for prediction, weight in zip(predictions, weights)) / sum(weights)
-    return ensemble_prediction
-
-'''
+    ensemble_prediction = sum(prediction
