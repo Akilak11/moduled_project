@@ -1,12 +1,11 @@
-#модуль config.py
-import os
+# config.pyimport os
 import torch
 from pathlib import Path
 
 # Директории
 ROOT_DIR = Path(__file__).parent.resolve()
 DATA_DIR = ROOT_DIR / "data"
-MODELS_DIR = Path("mnt/c/Python_project/models")
+MODELS_DIR = Path("/mnt/c/Python_project/models")
 PRETRAINED_MODELS_DIR = MODELS_DIR / "pretrain_models"
 MYTRAIN_MODELS_DIR = MODELS_DIR / "mytrain_models"
 
@@ -43,6 +42,12 @@ MODEL_PATHS = {
 USE_GPU = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_GPU else "cpu")
 NUM_WORKERS = os.cpu_count()
+
+# Пути к предварительно обученным моделям
+GPT2_MODEL_PATH = PRETRAINED_MODELS_DIR / "gpt2"
+MT_RU_EN_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-ru-en"
+MT_EN_RU_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-en-ru"
+RUBERT_MODEL_PATH = PRETRAINED_MODELS_DIR / "rubert_cased_L-12_H-768_A-12_v2"
 
 # Print information
 print(f"Using device: {DEVICE}")
