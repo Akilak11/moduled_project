@@ -31,6 +31,7 @@ def ensemble_predictions(predictions, weights):
     return ensemble_prediction
 
 #---------------------------------------------------------------------------------------------------------------
+# Два различных варианта кода для generate_response.py
 from typing import List
 import torch
 from config import GENERATE_RESPONSE_MAX_LENGTH, DEVICE, ANSWER_MODEL_1_PATH, ANSWER_MODEL_2_PATH, ANSWER_MODEL_3_PATH, ENSEMBLE_WEIGHTS
