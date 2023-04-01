@@ -1,6 +1,19 @@
 # config.pyimport os
 import torch
+import os
 from pathlib import Path
+
+# Конфигурация для моделей
+ENCODER_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
+DECODER_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
+GENERATION_MAX_LENGTH = 100
+GENERATION_MIN_LENGTH = 10
+GENERATION_TEMPERATURE = 0.7
+
+#Конфигурация для других настроек
+TRANSLATION_MAX_LENGTH = 512
+TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
+BACK_TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
 
 # Директории
 ROOT_DIR = Path(__file__).parent.resolve()
