@@ -7,8 +7,11 @@ import torch
 import platform
 from colorama import init, Fore
 
+
+
+from load_models import load_main_model, load_translation_models
 # Импорт локальных модулей
-from models import select_main_model, ensemble_predictions, generate_response_with_pipeline
+from generate_response import generate_response_with_pipeline, generate_response, ensemble_predictions
 # функции для работы с моделями: выбор основной модели, ансамблирование предсказаний и генерация ответа с использованием конвейера
 
 from utils import check_model_files, load_main_model
@@ -23,7 +26,7 @@ from resource_manager import enable_memory_growth, get_tokenizer_and_model, clea
 from text_proccessing import clean_text
 # функция для очистки текста от лишних символов и форматирования
 
-from translation import load_translation_models, translate_text
+import translation
 # функции для загрузки моделей перевода и перевода текста
 
 from user_interface import user_interface
