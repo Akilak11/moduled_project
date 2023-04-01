@@ -1,0 +1,11 @@
+
+# Выводим список моделей в одном вызове функции print()
+'''print(
+    "Выберите модель:\n"
+    "1. bert-base-uncased\n"
+    "2. roberta-base\n"
+    "3. gpt2\n"
+    "4. rubert_cased_L-12_H-768_A-12_v2\n"
+    "5. transfo-xl-wt103"
+)
+'''

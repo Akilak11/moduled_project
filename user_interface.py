@@ -2,6 +2,19 @@ from translation import load_translation_models, translate_text
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
 from text_processing import clean_text
 
+
+import cpuinfo
+
+# Получить информацию о процессоре
+info = cpuinfo.get_cpu_info()
+
+# Получить информацию о поддержке инструкций процессора
+sse2_supported = 'sse2' in info.get('flags', '')
+avx_supported = 'avx' in info.get('flags', '')
+avx2_supported = 'avx2' in info.get('flags', '')
+fma_supported = 'fma' in info.get('flags', '')
+
+print(info)
 #Функция user_interface содержит основной цикл программы, который выполняется, пока пользователь не выберет опцию выхода.
 #Внутри цикла пользователь может выбрать опцию для задания вопроса, изменения настроек или выхода из программы.
 #Если пользователь выбирает опцию задания вопроса, то его вводится входной текст, который очищается и отправляется на обработку моделями, а затем выводится сгенерированный ответ.
