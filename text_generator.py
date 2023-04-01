@@ -1,3 +1,5 @@
+#модуль text_generator.py
+
 import transformers
 import torch
 from typing import List, Union

@@ -1,3 +1,4 @@
+#модуль resource_manager.py
 import torch
 import tensorflow as tf
 from transformers import AutoTokenizer, AutoModelForCausalLM

@@ -1,3 +1,4 @@
+#модуль translation.py
 import transformers
 
 class TranslationService:

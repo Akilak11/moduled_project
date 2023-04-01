@@ -1,3 +1,4 @@
+#модуль generate_response.py
 from transformers import pipeline
 from load_models import load_main_model
 from text_processing import clean_text, validate_input

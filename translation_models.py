@@ -1,3 +1,5 @@
+#модуль translation_models.py
+
 import torch
 import transformers
 from config import DEVICE, TRANSLATION_MAX_LENGTH, BACK_TRANSLATION_MODEL_NAME, TRANSLATION_MODEL_NAME

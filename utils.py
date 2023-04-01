@@ -1,3 +1,4 @@
+#модуль utils.py
 import os
 import re
 import requests
@@ -35,10 +36,3 @@ def check_model_files(model_name, model_directory):
         return False
 
     return True
-
-#Функция load_main_model принимает имя основной модели и имя токенизатора, и загружает модель и токенизатор с помощью Hugging Face Transformers.
-#Модель затем отправляется на устройство, доступное для выполнения (GPU или CPU).
-def load_main_model(main_model_name, main_tokenizer_name):
-    main_model = AutoModelForCausalLM.from_pretrained(main_model_name).to(device)
-    main_tokenizer = AutoTokenizer.from_pretrained(main_tokenizer_name)
-    return main_model, main_tokenizer
