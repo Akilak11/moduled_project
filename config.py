@@ -1,8 +1,16 @@
 import os
+from pathlib import Path
+
+# Директории
+ROOT_DIR = Path(__file__).parent.resolve()
+DATA_DIR = ROOT_DIR / "data"
+MODELS_DIR = Path("mnt/c/Python_project/models")
+PRETRAINED_MODELS_DIR = MODELS_DIR / "pretrain_models"
+MYTRAIN_MODELS_DIR = MODELS_DIR / "mytrain_models"
 
 # Пути к данным
-TRAIN_DATA_PATH = os.path.join("data", "train.csv")
-TEST_DATA_PATH = os.path.join("data", "test.csv")
+TRAIN_DATA_PATH = DATA_DIR / "train.csv"
+TEST_DATA_PATH = DATA_DIR / "test.csv"
 
 # Параметры модели
 BATCH_SIZE = 32
@@ -12,22 +20,23 @@ NUM_CLASSES = 10
 INPUT_SHAPE = (28, 28, 1)
 
 # Пути к моделям
-main_model_path = "mnt/c/Python_project/models/pretrain_models"
-translation_model_path = "mnt/c/Python_project/models/pretrain_models/wmt19-en-ru"
-back_translation_model_path = "mnt/c/Python_project/models/pretrain_models/wmt19-ru-en"
+main_model_path = PRETRAINED_MODELS_DIR / "main_model"
+translation_model_path = PRETRAINED_MODELS_DIR / "wmt19-en-ru"
+back_translation_model_path = PRETRAINED_MODELS_DIR / "wmt19-ru-en"
 answer_models_paths = [
-    str(MODELS_DIR / "answer_model_1"),
-    str(MODELS_DIR / "answer_model_2"),
-    str(MODELS_DIR / "answer_model_3"),
+    MYTRAIN_MODELS_DIR / "answer_model_1",
+    MYTRAIN_MODELS_DIR / "answer_model_2",
+    MYTRAIN_MODELS_DIR / "answer_model_3",
 ]
 weights = [0.4, 0.3, 0.3]
 
 # Новые пути к моделям (для будущих моделей)
 MODEL_PATHS = {
-    "model1": "models/model1",
-    "model2": "models/model2",
-    "model3": "models/model3"
+    "model1": MYTRAIN_MODELS_DIR / "model1",
+    "model2": MYTRAIN_MODELS_DIR / "model2",
+    "model3": MYTRAIN_MODELS_DIR / "model3"
 }
+
 
 '''Примеры других config.py
 -------------------------------------------------------------------------------------------------------------------------------------------------
