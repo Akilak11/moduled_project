@@ -5,10 +5,11 @@ from text_processing import clean_text, validate_input
 from text_generator import TextGenerator
 from translation_models import TranslationModel
 from translation import TranslationService
+from config import ENCODER_MODEL_NAME, DECODER_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, DEVICE
 
 # Создание экземпляров TranslationService, TextGenerator и TranslationModel
 translation_service = TranslationService("Helsinki-NLP/opus-mt-en-ru", "cuda")
-text_generator_instance = TextGenerator("Your_Encoder_Model_Name", "Your_Decoder_Model_Name", "cuda")
+text_generator_instance = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, "cuda")
 back_translation_model = TranslationModel(BACK_TRANSLATION_MODEL_NAME, DEVICE)
 
 def generate_response(user_prompt: str, model_name: str, ensemble: bool = False,
@@ -27,13 +28,13 @@ def generate_response(user_prompt: str, model_name: str, ensemble: bool = False,
 
     # Генерация ответа
     if use_encoder_decoder:
-        response = text_generator_instance(cleaned_text)  # Использование экземпляра TextGenerator
+        response = text_generator_instance.generate(cleaned_text)  # Использование экземпляра TextGenerator
     else:
         response = generate_response_with_pipeline(model_name, cleaned_text, num_beams, temperature, **kwargs)
 
     # Перевод ответа
     if back_translate:
-        response = translation_service(response, max_length=512)  # Использование экземпляра TranslationService
+        response = translation_service.translate(response, max_length=512)  # Использование экземпляра TranslationService
 
     # Ансамбль предсказаний
     if ensemble:
@@ -41,12 +42,12 @@ def generate_response(user_prompt: str, model_name: str, ensemble: bool = False,
         weights = [1.0]
 
         if back_translate:
-            translated_response = translation_service(response, max_length=512)  # Использование экземпляра TranslationService
+            translated_response = translation_service.translate(response, max_length=512)  # Использование экземпляра TranslationService
             predictions.append(translated_response)
             weights.append(0.5)
 
         if use_encoder_decoder:
-            encoder_decoder_response = text_generator_instance(clean_text(response))  # Использование экземпляра TextGenerator
+            encoder_decoder_response = text_generator_instance.generate(clean_text(response))  # Использование экземпляра TextGenerator
             predictions.append(encoder_decoder_response)
             weights.append(0.5)
 
@@ -68,4 +69,5 @@ def ensemble_predictions(predictions, weights):
         if weight < 0:
             raise ValueError("Веса должны быть неотрицательными")
 
-    ensemble_prediction = sum(prediction
+    ensemble_prediction = sum(prediction * weight for prediction, weight in zip(predictions, weights)) / sum(weights)
+    return ensemble_prediction

@@ -39,7 +39,7 @@ def get_tokenizer_and_model(model_names):
     return tokenizers, models
 
 #Функция clear_models принимает список моделей и очищает их из памяти.
-def clear_models(models):
+def clear_model(models):
     for model in models:
         del model
 

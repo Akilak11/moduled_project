@@ -1,4 +1,5 @@
 #модуль utils.py
+import torch
 import os
 import re
 import requests
