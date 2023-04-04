@@ -1,5 +1,6 @@
 # config.pyimport os
 import torch
+import re
 import os
 from pathlib import Path
 
@@ -62,6 +63,18 @@ GPT2_MODEL_PATH = PRETRAINED_MODELS_DIR / "gpt2"
 MT_RU_EN_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-ru-en"
 MT_EN_RU_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-en-ru"
 RUBERT_MODEL_PATH = PRETRAINED_MODELS_DIR / "rubert_cased_L-12_H-768_A-12_v2"
+
+'''bert-base-uncased
+google_mt5-small
+google_mt5-xxl
+gpt2
+Helsinki-NLP
+roberta-base
+rubert_cased_L-12_H-768_A-12_v2
+sberbank-ai_ruclip-vit-large-patch14-336
+transfo-xl-wt103
+wmt19-en-ru
+wmt19-ru-en'''
 
 # Print information
 print(f"Using device: {DEVICE}")

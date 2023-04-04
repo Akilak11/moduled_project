@@ -6,7 +6,7 @@ import requests
 import threading
 from transformers import GPTNeoForCausalLM, GPT2Tokenizer, AutoTokenizer
 
-from config import DEVICE, MODEL_NAME, MODEL_DIRECTORY
+from config import DEVICE, MODEL_NAME, MAIN_MODEL, MODEL_DIRECTORY, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
