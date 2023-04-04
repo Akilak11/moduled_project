@@ -1,5 +1,5 @@
 # модуль user_interface.py
-from load_models import load_main_model
+from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input
 from translation import TranslationService
 from generate_response import generate_response_with_pipeline, ensemble_predictions

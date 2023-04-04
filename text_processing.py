@@ -25,11 +25,11 @@ def extract_code_and_explanations(text: str) -> Tuple[str, str]:
 
     return code, explanation
 
-def translate_and_combine(text: str) -> str:
+'''def translate_and_combine(text: str) -> str:
     # Замените "ru" и "en" на нужные языки, если нужно переводить на другие языки
     translated_text = separate_code_and_explanations(text)
     translated_explanations = translate_text(translated_text[1], target_language="en", src_language="ru")
-    return combine_code_and_translated_explanations(translated_text[0], translated_explanations)
+    return combine_code_and_translated_explanations(translated_text[0], translated_explanations)'''
 
 def validate_input(user_input, min_length=1, max_length=512):
     """

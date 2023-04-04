@@ -3,6 +3,7 @@ import torch
 import re
 import os
 from pathlib import Path
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Конфигурация для моделей
 MAIN_MODEL = "EleutherAI/gpt-neo-2.7B"
@@ -35,23 +36,26 @@ LEARNING_RATE = 0.001
 NUM_CLASSES = 10
 INPUT_SHAPE = (28, 28, 1)
 
-# Пути к моделям
-main_model_path = PRETRAINED_MODELS_DIR / "gpt-neo-2.7B"
-translation_model_path = PRETRAINED_MODELS_DIR / "wmt19-en-ru"
-back_translation_model_path = PRETRAINED_MODELS_DIR / "wmt19-ru-en"
-answer_models_paths = [
-    MYTRAIN_MODELS_DIR / "answer_model_1",
-    MYTRAIN_MODELS_DIR / "answer_model_2",
-    MYTRAIN_MODELS_DIR / "answer_model_3",
-]
-weights = [0.4, 0.3, 0.3]
+# Обновленные пути к моделям
+MODEL_PATHS = {
+    "main_model": PRETRAINED_MODELS_DIR / "gpt-neo-2.7B",
+    "translation_model": PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-en-ru",
+    "back_translation_model": PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-ru-en",
+    "answer_model_1": MYTRAIN_MODELS_DIR / "answer_model_1",
+    "answer_model_2": MYTRAIN_MODELS_DIR / "answer_model_2",
+    "answer_model_3": MYTRAIN_MODELS_DIR / "answer_model_3",
+    "model1": MYTRAIN_MODELS_DIR / "model1",
+    "model2": MYTRAIN_MODELS_DIR / "model2",
+    "model3": MYTRAIN_MODELS_DIR / "model3",
+}
+#weights = [0.4, 0.3, 0.3]
 
-# Новые пути к моделям (для будущих моделей)
+'''# Новые пути к моделям (для будущих моделей)
 MODEL_PATHS = {
     "model1": MYTRAIN_MODELS_DIR / "model1",
     "model2": MYTRAIN_MODELS_DIR / "model2",
     "model3": MYTRAIN_MODELS_DIR / "model3"
-}
+}'''
 
 # Hardware parameters
 USE_GPU = torch.cuda.is_available()
@@ -63,18 +67,28 @@ GPT2_MODEL_PATH = PRETRAINED_MODELS_DIR / "gpt2"
 MT_RU_EN_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-ru-en"
 MT_EN_RU_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-en-ru"
 RUBERT_MODEL_PATH = PRETRAINED_MODELS_DIR / "rubert_cased_L-12_H-768_A-12_v2"
+ROBERTA_BASE_MODEL_PATH = PRETRAINED_MODELS_DIR / "roberta-base"
 
-'''bert-base-uncased
-google_mt5-small
-google_mt5-xxl
-gpt2
-Helsinki-NLP
-roberta-base
-rubert_cased_L-12_H-768_A-12_v2
-sberbank-ai_ruclip-vit-large-patch14-336
-transfo-xl-wt103
-wmt19-en-ru
-wmt19-ru-en'''
+
+MODEL_NAMES = model_names
+model_names = [
+    "gpt-neo-2.7B"
+    "bert-base-uncased",
+    "google_mt5-small",
+    "google_mt5-xxl",
+    "gpt2",
+    "Helsinki-NLP/opus-mt-ru-en",
+    "Helsinki-NLP/opus-mt-en-ru",
+    "roberta-base",
+    "rubert_cased_L-12_H-768_A-12_v2",
+    "sberbank-ai_ruclip-vit-large-patch14-336",
+    "transfo-xl-wt103",
+    "wmt19-en-ru",
+    "wmt19-ru-en",
+    ]
+    
+models = []
+tokenizers = []
 
 # Print information
 print(f"Using device: {DEVICE}")

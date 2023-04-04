@@ -1,17 +1,16 @@
-#модуль utils.py
+# модуль utils.py 
 import torch
 import os
-import re
 import requests
 import threading
 from transformers import GPTNeoForCausalLM, GPT2Tokenizer, AutoTokenizer
 
-from config import DEVICE, MODEL_NAME, MAIN_MODEL, MODEL_DIRECTORY, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
+from config import DEVICE, MAIN_MODEL, MODEL_PATHS, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-#Функция check_model_files принимает имя модели и директорию, в которой хранятся файлы модели, и проверяет, доступны ли эти файлы на сервере Hugging Face и имеют ли они такой же размер, как и локальные файлы на диске. 
-#Если проверка не пройдена, функция возвращает False, в противном случае - True.
+# Функция check_model_files принимает имя модели и директорию, в которой хранятся файлы модели, и проверяет, доступны ли эти файлы на сервере Hugging Face и имеют ли они такой же размер, как и локальные файлы на диске. 
+# Если проверка не пройдена, функция возвращает False, в противном случае - True.
 def check_model_files(model_name, model_directory):
     config_url = f"https://huggingface.co/{model_name}/resolve/main/config.json"
     model_url = f"https://huggingface.co/{model_name}/resolve/main/pytorch_model.bin"
@@ -41,34 +40,21 @@ def check_model_files(model_name, model_directory):
         return False
 
     return True
-    
-from transformers import GPT2TokenizerFast
 
-from transformers import AutoTokenizer
+def download_file(url, local_path):
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
 
-def load_main_model(model_name):
-    model_directory = os.path.join("models", model_name)
-    
-    if not check_model_files(model_name, model_directory):
-        print("Проверка файлов модели не пройдена. Пожалуйста, убедитесь, что файлы модели доступны и имеют правильный размер.")
-        return
+    with open(local_path, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
 
-    model = GPTNeoForCausalLM.from_pretrained(model_directory).to(device)
-    
-    # Если модель - EleutherAI/gpt-neo-2.7B, используем GPT2Tokenizer, иначе используем AutoTokenizer
-    if model_name == "EleutherAI/gpt-neo-2.7B":
-        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    else:
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+def download_model(model_name, model_directory):
+    config_url = f"https://huggingface.co/{model_name}/resolve/main/config.json"
+    model_url = f"https://huggingface.co/{model_name}/resolve/main/pytorch_model.bin"
 
-    return model, tokenizer
-
-def download_model():
-    config_url = f"https://huggingface.co/{MODEL_NAME}/resolve/main/config.json"
-    model_url = f"https://huggingface.co/{MODEL_NAME}/resolve/main/pytorch_model.bin"
-
-    local_config_path = os.path.join(MODEL_DIRECTORY, "config.json")
-    local_model_path = os.path.join(MODEL_DIRECTORY, "pytorch_model.bin")
+    local_config_path = os.path.join(model_directory, "config.json")
+    local_model_path = os.path.join(model_directory, "pytorch_model.bin")
 
     print("Скачивание файлов модели...")
 

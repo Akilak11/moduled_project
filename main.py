@@ -1,16 +1,17 @@
-# модуль main.py
 import os
 import sys
 import torch
 import platform
 from colorama import init, Fore
 
-from load_models import load_main_model
-from resource_manager import enable_memory_growth
-from translation import TranslationService
+from load_models import load_models, load_translation_models
+from resource_manager import enable_memory_growth, clear_gpu_cache
+from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
+from text_processing import clean_text, extract_code_and_explanations, validate_input
+from translation_models import TranslationModel, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
+from text_generator import TextGenerator, ENCODER_MODEL_NAME, DECODER_MODEL_NAME
 from user_interface import user_interface
-from utils import check_model_files, load_main_model, download_model
-from config import MAIN_MODEL, DEVICE
+from config import MODEL_NAMES, DEVICE
 
 init()
 
@@ -21,10 +22,14 @@ else:
     device = torch.device("cpu")
     print("Работает на CPU")
 
-translation_service = TranslationService("Helsinki-NLP/opus-mt-en-ru", "cuda")
-back_translation_service = TranslationService("Helsinki-NLP/opus-mt-ru-en", "cuda")
+enable_memory_growth()
 
-weights = [1.0, 0.8] 
+models, tokenizers = load_models(MODEL_NAMES)
+translation_model = TranslationModel(TRANSLATION_MODEL_NAME, device)
+back_translation_model = TranslationModel(BACK_TRANSLATION_MODEL_NAME, device)
+text_generator = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE)
+
+weights = [1.0, 0.8]
 num_beams = 5
 temperature = 1.0
 
@@ -35,22 +40,12 @@ print("system_info: CPU = {}, RAM = {} GB, OS = {}, Python = {}".format(
     sys.version
 ))
 
-print("Загрузка моделей...")
-
-MAIN_MODEL = main_model
-main_model, main_tokenizer = load_main_model()
-models.append(main_model)
-tokenizers.append(main_tokenizer)
-
 print("Модели успешно загружены.")
 
 if __name__ == "__main__":
-    enable_memory_growth()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Используется устройство: {device}")
-    main_model, main_tokenizer = load_main_model()
-    translation_service = TranslationService("Helsinki-NLP/opus-mt-en-ru", "cuda")
-    back_translation_service = TranslationService("Helsinki-NLP/opus-mt-ru-en", "cuda")
-    num_beams = 5
-    temperature = 1.0
-    user_interface(device, main_model, main_tokenizer, translation_service, back_translation_service, weights)
+    main_model, main_tokenizer = models[0], tokenizers[0]  # Используем первую модель и токенизатор (например, GPT-2)
+    user_interface(device, main_model, main_tokenizer, translation_model, back_translation_model, text_generator, weights, num_beams, temperature)
+
+clear_gpu_cache()
