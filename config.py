@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 # Конфигурация для моделей
+MAIN_MODEL = "EleutherAI/gpt-neo-2.7B"
 ENCODER_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
 DECODER_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
 GENERATION_MAX_LENGTH = 100
@@ -34,7 +35,7 @@ NUM_CLASSES = 10
 INPUT_SHAPE = (28, 28, 1)
 
 # Пути к моделям
-main_model_path = PRETRAINED_MODELS_DIR / "main_model"
+main_model_path = PRETRAINED_MODELS_DIR / "gpt-neo-2.7B"
 translation_model_path = PRETRAINED_MODELS_DIR / "wmt19-en-ru"
 back_translation_model_path = PRETRAINED_MODELS_DIR / "wmt19-ru-en"
 answer_models_paths = [

@@ -9,6 +9,8 @@ from load_models import load_main_model
 from resource_manager import enable_memory_growth
 from translation import TranslationService
 from user_interface import user_interface
+from utils import check_model_files, load_main_model, download_model
+from config import MAIN_MODEL, DEVICE
 
 init()
 
@@ -35,7 +37,10 @@ print("system_info: CPU = {}, RAM = {} GB, OS = {}, Python = {}".format(
 
 print("Загрузка моделей...")
 
+MAIN_MODEL = main_model
 main_model, main_tokenizer = load_main_model()
+models.append(main_model)
+tokenizers.append(main_tokenizer)
 
 print("Модели успешно загружены.")
 
