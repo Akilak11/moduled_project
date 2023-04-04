@@ -3,9 +3,10 @@ import torch
 import os
 import re
 import requests
-from transformers import GPTNeoForCausalLM, GPT2Tokenizer
-from config import main_model_path, DEVICE
-from utils import check_model_files
+import threading
+from transformers import GPTNeoForCausalLM, GPT2Tokenizer, AutoTokenizer
+
+from config import DEVICE, MODEL_NAME, MODEL_DIRECTORY
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -41,6 +42,10 @@ def check_model_files(model_name, model_directory):
 
     return True
     
+from transformers import GPT2TokenizerFast
+
+from transformers import AutoTokenizer
+
 def load_main_model(model_name):
     model_directory = os.path.join("models", model_name)
     
@@ -48,26 +53,32 @@ def load_main_model(model_name):
         print("Проверка файлов модели не пройдена. Пожалуйста, убедитесь, что файлы модели доступны и имеют правильный размер.")
         return
 
-    model = GPTNeoForCausalLM.from_pretrained(model_directory).to(DEVICE)
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    model = GPTNeoForCausalLM.from_pretrained(model_directory).to(device)
+    
+    # Если модель - EleutherAI/gpt-neo-2.7B, используем GPT2Tokenizer, иначе используем AutoTokenizer
+    if model_name == "EleutherAI/gpt-neo-2.7B":
+        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     return model, tokenizer
 
-def download_model(model_name, model_directory):
-    config_url = f"https://huggingface.co/{model_name}/resolve/main/config.json"
-    model_url = f"https://huggingface.co/{model_name}/resolve/main/pytorch_model.bin"
+def download_model():
+    config_url = f"https://huggingface.co/{MODEL_NAME}/resolve/main/config.json"
+    model_url = f"https://huggingface.co/{MODEL_NAME}/resolve/main/pytorch_model.bin"
 
-    local_config_path = os.path.join(model_directory, "config.json")
-    local_model_path = os.path.join(model_directory, "pytorch_model.bin")
+    local_config_path = os.path.join(MODEL_DIRECTORY, "config.json")
+    local_model_path = os.path.join(MODEL_DIRECTORY, "pytorch_model.bin")
 
     print("Скачивание файлов модели...")
 
-    response_config = requests.get(config_url)
-    with open(local_config_path, "wb") as f:
-        f.write(response_config.content)
+    thread1 = threading.Thread(target=download_file, args=(config_url, local_config_path))
+    thread2 = threading.Thread(target=download_file, args=(model_url, local_model_path))
 
-    response_model = requests.get(model_url)
-    with open(local_model_path, "wb") as f:
-        f.write(response_model.content)
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()
 
     print("Файлы модели успешно скачаны.")
