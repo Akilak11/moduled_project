@@ -67,7 +67,7 @@ def process_user_input(
     print("Не удалось сгенерировать ответ. Попробуйте еще раз.")
     return ""
 
-def user_interface(device, model, tokenizer, translation_service, back_translation_service, weights, num_beams, temperature):
+def user_interface(device, main_model, main_tokenizer, main_model_name, translation_model, back_translation_model, text_generator, weights, num_beams, temperature):
     print("Добро пожаловать в систему генерации ответов на основе искусственного интеллекта!")
 
     # Настройки по умолчанию

@@ -12,7 +12,7 @@ from text_processing import clean_text, extract_code_and_explanations, validate_
 from translation_models import TranslationModel, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
 from text_generator import TextGenerator, ENCODER_MODEL_NAME, DECODER_MODEL_NAME
 from user_interface import user_interface
-from config import MODEL_NAMES, DEVICE
+from config import MODEL_NAMES, DEVICE, MAIN_MODEL
 
 init()
 
@@ -46,7 +46,8 @@ print("Модели успешно загружены.")
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Используется устройство: {device}")
-    main_model, main_tokenizer = models[0], tokenizers[0]  # Используем первую модель и токенизатор (например, GPT-2)
+    main_model_index = MODEL_NAMES.index(MAIN_MODEL)
+    main_model, main_tokenizer = models[main_model_index], tokenizers[main_model_index]
     user_interface(device, main_model, main_tokenizer, translation_model, back_translation_model, text_generator, weights, num_beams, temperature)
 
 clear_gpu_cache()

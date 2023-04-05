@@ -1,4 +1,5 @@
-# config.pyimport os
+# config.py
+import os
 import torch
 import re
 import os
@@ -19,9 +20,9 @@ TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
 BACK_TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
 
 # Директории
-ROOT_DIR = Path(__file__).parent.resolve()
-DATA_DIR = ROOT_DIR / "data"
 MODELS_DIR = Path("/mnt/c/Python_project/models")
+if "MODELS_DIR" in os.environ:
+    MODELS_DIR = Path(os.environ["MODELS_DIR"])
 PRETRAINED_MODELS_DIR = MODELS_DIR / "pretrain_models"
 MYTRAIN_MODELS_DIR = MODELS_DIR / "mytrain_models"
 
@@ -48,14 +49,43 @@ MODEL_PATHS = {
     "model2": MYTRAIN_MODELS_DIR / "model2",
     "model3": MYTRAIN_MODELS_DIR / "model3",
 }
-#weights = [0.4, 0.3, 0.3]
 
-'''# Новые пути к моделям (для будущих моделей)
-MODEL_PATHS = {
-    "model1": MYTRAIN_MODELS_DIR / "model1",
-    "model2": MYTRAIN_MODELS_DIR / "model2",
-    "model3": MYTRAIN_MODELS_DIR / "model3"
+'''MODEL_NAMES = {
+    "gpt-neo-2.7B": "EleutherAI/gpt-neo-2.7B",
+    "bert-base-uncased": "bert-base-uncased",
+    "google_mt5-small": "google/mt5-small",
+    "google_mt5-xxl": "google/mt5-xxl",
+    "gpt2": "gpt2",
+    "Helsinki-NLP/opus-mt-ru-en": "Helsinki-NLP/opus-mt-ru-en",
+    "Helsinki-NLP/opus-mt-en-ru": "Helsinki-NLP/opus-mt-en-ru",
+    "roberta-base": "roberta-base",
+    "rubert_cased_L-12_H-768_A-12_v2": "sberbank-ai/rubert_cased_L-12_H-768_A-12_v2",
+    "sberbank-ai_ruclip-vit-large-patch14-336": "sberbank-ai/ruclip-vit-large-patch14-336",
+    "transfo-xl-wt103": "transfo-xl-wt103",
+    "wmt19-en-ru": "Helsinki-NLP/wmt19-en-ru",
+    "wmt19-ru-en": "Helsinki-NLP/wmt19-ru-en"
 }'''
+
+MODEL_NAMES = [
+    "EleutherAI/gpt-neo-2.7B",
+    "bert-base-uncased",
+    "google_mt5-small",
+    "google_mt5-xxl",
+    "gpt2",
+    "Helsinki-NLP/opus-mt-ru-en",
+    "Helsinki-NLP/opus-mt-en-ru",
+    "roberta-base",
+    "rubert_cased_L-12_H-768_A-12_v2",
+    "sberbank-ai_ruclip-vit-large-patch14-336",
+    "transfo-xl-wt103",
+    "wmt19-en-ru",
+    "wmt19-ru-en",
+]
+
+model_names = MODEL_NAMES
+
+models = []
+tokenizers = []
 
 # Hardware parameters
 USE_GPU = torch.cuda.is_available()
@@ -69,30 +99,24 @@ MT_EN_RU_MODEL_PATH = PRETRAINED_MODELS_DIR / "Helsinki-NLP/opus-mt-en-ru"
 RUBERT_MODEL_PATH = PRETRAINED_MODELS_DIR / "rubert_cased_L-12_H-768_A-12_v2"
 ROBERTA_BASE_MODEL_PATH = PRETRAINED_MODELS_DIR / "roberta-base"
 
-
-MODEL_NAMES = model_names
-model_names = [
-    "gpt-neo-2.7B"
-    "bert-base-uncased",
-    "google_mt5-small",
-    "google_mt5-xxl",
-    "gpt2",
-    "Helsinki-NLP/opus-mt-ru-en",
-    "Helsinki-NLP/opus-mt-en-ru",
-    "roberta-base",
-    "rubert_cased_L-12_H-768_A-12_v2",
-    "sberbank-ai_ruclip-vit-large-patch14-336",
-    "transfo-xl-wt103",
-    "wmt19-en-ru",
-    "wmt19-ru-en",
-    ]
-
-models = []
-tokenizers = []
-
 # Print information
 print(f"Using device: {DEVICE}")
 print(f"Number of workers: {NUM_WORKERS}")
+
+MODEL_NAMES = [
+    "main_model",
+    "translation_model",
+    "back_translation_model",
+] + MODEL_NAMES
+
+#weights = [0.4, 0.3, 0.3]
+
+'''# Новые пути к моделям (для будущих моделей)
+MODEL_PATHS = {
+    "model1": MYTRAIN_MODELS_DIR / "model1",
+    "model2": MYTRAIN_MODELS_DIR / "model2",
+    "model3": MYTRAIN_MODELS_DIR / "model3"
+}'''
 
 '''Примеры других config.py
 -------------------------------------------------------------------------------------------------------------------------------------------------

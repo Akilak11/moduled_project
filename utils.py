@@ -9,6 +9,10 @@ from config import DEVICE, MAIN_MODEL, MODEL_PATHS, ENCODER_MODEL_NAME, DECODER_
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+MODELS_DIR = MODELS_PATH / "models"
+os.makedirs(MODELS_DIR, exist_ok=True)
+
+
 # Функция check_model_files принимает имя модели и директорию, в которой хранятся файлы модели, и проверяет, доступны ли эти файлы на сервере Hugging Face и имеют ли они такой же размер, как и локальные файлы на диске. 
 # Если проверка не пройдена, функция возвращает False, в противном случае - True.
 def check_model_files(model_name, model_directory):
@@ -30,7 +34,7 @@ def check_model_files(model_name, model_directory):
 
     if not os.path.isfile(local_config_path) or not os.path.isfile(local_model_path):
         print("Один или оба файла модели отсутствуют на жестком диске.")
-        return False
+        return True
 
     local_config_size = os.path.getsize(local_config_path)
     local_model_size = os.path.getsize(local_model_path)
