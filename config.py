@@ -86,7 +86,7 @@ model_names = [
     "wmt19-en-ru",
     "wmt19-ru-en",
     ]
-    
+
 models = []
 tokenizers = []
 

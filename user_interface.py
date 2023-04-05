@@ -2,9 +2,8 @@
 from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input
 from translation import TranslationService
-from generate_response import generate_response_with_pipeline, ensemble_predictions
+from generate_response import generate_response, ensemble_predictions
 from colorama import Fore
-
 
 import cpuinfo
 
@@ -45,10 +44,11 @@ def process_user_input(
             translated_prompt = translation_service.translate(user_prompt, max_length=512)
 
             generated_responses = []
-            response = generate_response_with_pipeline(
+            response = generate_response(
                 translated_prompt,
-                model,
-                tokenizer,
+                [model],
+                ensemble=False,
+                back_translate=True,
                 num_beams=num_beams,
                 temperature=temperature
             )
@@ -91,74 +91,32 @@ def user_interface(device, model, tokenizer, translation_service, back_translati
                 print("Спасибо за использование нашей системы. До свидания!")
                 break
             else:
-                if not validate_input(user_input, min_length=1, max_length=512):
-                    print("Ошибка: Ввод не соответствует заданным критериям.")
-                    print("Пожалуйста, введите вопрос длиной от 1 до 512 символов.")
+                if not validate_input(user_input):
+                    print("Пожалуйста, введите корректный текст.")
                     continue
 
-                user_prompt = clean_text(user_input)
-
-                answer = process_user_input(
+                response = process_user_input(
                     device,
                     settings,
-                    user_prompt,
+                    user_input,
                     model,
                     tokenizer,
                     translation_service,
                     back_translation_service,
                     weights,
-                    max_length=settings["max_length"],
-                    temperature=settings["temperature"],
-                    num_beams=num_beams  # Замените settings["top_k"] на num_beams
+                    num_beams=num_beams,
+                    temperature=temperature
                 )
-                print(Fore.GREEN + "Вопрос пользователя: " + Fore.RESET + user_input)
-                print(Fore.BLUE + "Ответ: " + Fore.RESET + answer)
+                print(f"Ответ: {response}")
 
         elif user_choice == "2":
-            print("Текущие настройки:")
-            for key, value in settings.items():
-                print(f"{key}: {value}")
-
-            print("Выберите настройку для изменения:")
-            print("1. Максимальная длина ответа")
-            print("2. Температура")
-            print("3. Top-k")
-            print("4. Назад")
-
-            setting_choice = input("Введите номер настройки: ")
-
-            if setting_choice == "1":
-                new_value = int(input("Введите новое значение максимальной длины ответа (10-300): "))
-                if 10 <= new_value <= 300:
-                    settings["max_length"] = new_value
-                else:
-                    print("Некорректное значение, оставляем значение по умолчанию.")
-
-            elif setting_choice == "2":
-                new_value = float(input("Введите новое значение температуры (0.1-2.0): "))
-                if 0.1 <= new_value <= 2.0:
-                    settings["temperature"] = new_value
-                else:
-                    print("Некорректное значение, оставляем значение по умолчанию.")
-
-            elif setting_choice == "3":
-                new_value = int(input("Введите новое значение Top-k (0-50): "))
-                if 0 <= new_value <= 50:
-                    settings["top_k"] = new_value
-                else:
-                    print("Некорректное значение, оставляем значение по умолчанию.")
-
-            elif setting_choice == "4":
-                pass
-
-            else:
-                print("Некорректный выбор, попробуйте еще раз.")
+            print("Изменить настройки")
+            # Здесь можно добавить функционал для изменения настроек
+            print("Этот функционал пока не доступен")
 
         elif user_choice == "3":
-            print("Выход...")
+            print("Спасибо за использование нашей системы. До свидания!")
             break
 
         else:
-             print("Некорректный выбор, попробуйте еще раз.")
-
-    print("Спасибо за использование нашей системы. До свидания!")
+            print("Неверный ввод. Пожалуйста, введите номер одной из предложенных опций.")

@@ -1,4 +1,4 @@
-#модуль generate_response.py
+# модуль generate_response.py
 from transformers import pipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from load_models import load_models, load_translation_models
@@ -69,3 +69,4 @@ def ensemble_predictions(predictions, weights):
 
     ensemble_prediction = sum(prediction * weight for prediction, weight in zip(predictions, weights)) / sum(weights)
     return ensemble_prediction
+

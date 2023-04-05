@@ -1,3 +1,4 @@
+# модуль main
 import os
 import sys
 import torch
