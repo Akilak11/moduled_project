@@ -8,11 +8,18 @@ from translation_models import TranslationModel
 from config import PARAMETERS, MODEL_NAMES, BACK_TRANSLATION_MODEL_NAME, TRANSLATION_MODEL_NAME
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
 
+
+MODEL_NAME = None
+for parameter in PARAMETERS:
+    if parameter["name"] == "model_name":
+        MODEL_NAME = parameter["default_value"]
+        break
+
 # Получение параметров из PARAMETERS
-MODEL_NAME = MODEL_NAMES['model_name']
-DEVICE = DEVICE['device']
-TRANSLATION_MODEL_NAME = TRANSLATION_MODEL_NAME['translation_model_name']
-BACK_TRANSLATION_MODEL_NAME = BACK_TRANSLATION_MODEL_NAME['back_translation_model_name']
+MODEL_NAME = PARAMETERS['model_name']
+DEVICE = PARAMETERS['device']
+TRANSLATION_MODEL_NAME = PARAMETERS['translation_model_name']
+BACK_TRANSLATION_MODEL_NAME = PARAMETERS['back_translation_model_name']
 MAX_LENGTH = PARAMETERS['max_length']
 TEMPERATURE = PARAMETERS['temperature']
 NUM_BEAMS = PARAMETERS['num_beams']
