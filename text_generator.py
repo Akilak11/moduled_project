@@ -1,4 +1,4 @@
-#модуль text_generator.py
+#модуль text_generator
 
 import transformers
 import torch
@@ -6,7 +6,7 @@ from typing import List, Union
 #from config import DEVICE, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE
 
 class TextGenerator:
-    def __init__(self, encoder_model_name: str, decoder_model_name: str, device: str, generation_max_length: int, generation_min_length: int, generation_temperature: float):
+    def __init__(self, encoder_model_name: str, decoder_model_name: str, device: str, generation_max_length: int, generation_temperature: float):
         self.encoder_tokenizer = transformers.AutoTokenizer.from_pretrained(encoder_model_name)
         self.decoder_tokenizer = transformers.AutoTokenizer.from_pretrained(decoder_model_name)
         self.encoder_model = transformers.AutoModel.from_pretrained(encoder_model_name).to(device)
@@ -15,7 +15,7 @@ class TextGenerator:
         self.decoder_model.eval()
         self.device = device
         self.generation_max_length = generation_max_length
-        self.generation_min_length = generation_min_length
+        #self.generation_min_length = generation_min_length
         self.generation_temperature = generation_temperature
 
     def generate_response(self, input_text: Union[str, List[str]]) -> Union[str, List[str]]:

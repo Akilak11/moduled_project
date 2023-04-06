@@ -1,122 +1,100 @@
-# модуль user_interface.py
+# модуль user_interface
+import platform
+import os
+import sys
+import cpuinfo
+from config import PARAMETERS
 from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input
 from translation import TranslationService
+from translation_models import TranslationModel
 from generate_response import generate_response, ensemble_predictions
-from colorama import Fore
-
-import cpuinfo
 
 # Получить информацию о процессоре
 info = cpuinfo.get_cpu_info()
 
-# Получить информацию о поддержке инструкций процессора
-sse2_supported = 'sse2' in info.get('flags', '')
-avx_supported = 'avx' in info.get('flags', '')
-avx2_supported = 'avx2' in info.get('flags', '')
-fma_supported = 'fma' in info.get('flags', '')
+def print_device_info():
+    print(info)
+    print("system_info: CPU = {}, RAM = {} GB, OS = {}, Python = {}".format(
+        platform.processor(),
+        round(os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / (1024 ** 3), 2),
+        platform.system(),
+        sys.version
+    ))
 
-print(info)
+def print_menu():
+    print("1. Обучить модель")
+    print("2. Использовать обученную модель")
+    print("3. Изменить настройки")
+    print("4. Информация о текущем оборудовании")
+    print("5. Выход")
 
-def process_user_input(
-    device,
-    settings,
-    user_prompt,
-    model,
-    tokenizer,
-    translation_service,
-    back_translation_service,
-    weights,
-    user_language="ru",
-    max_length=512,
-    max_retries=3,
-    num_beams=5,
-    temperature=1.0
-):
+def user_interface():
+    # Загрузка моделей и токенизаторов
+    model, tokenizer = load_models(PARAMETERS)
+    translation_model, back_translation_model = load_translation_models(PARAMETERS)
 
-    if len(user_prompt) > max_length:
-        print(f"Длина ввода слишком большая. Максимальная длина: {max_length}")
-        return ""
+    # Создание экземпляров TranslationService
+    translation_service = TranslationService(PARAMETERS['translation_model_name'], PARAMETERS['device'])
 
-    retries = 0
-    while retries < max_retries:
-        try:
-            translated_prompt = translation_service.translate(user_prompt, max_length=512)
-
-            generated_responses = []
-            response = generate_response(
-                translated_prompt,
-                [model],
-                ensemble=False,
-                back_translate=True,
-                num_beams=num_beams,
-                temperature=temperature
-            )
-            generated_responses.append(response)
-
-            ensemble_response = ensemble_predictions(generated_responses, weights)
-
-            translated_response = back_translation_service.translate(ensemble_response, max_length=512)
-
-            return translated_response
-
-        except Exception as e:
-            print("Ошибка во время генерации ответа. Повторяю...")
-            retries += 1
-
-    print("Не удалось сгенерировать ответ. Попробуйте еще раз.")
-    return ""
-
-def user_interface(device, main_model, main_tokenizer, main_model_name, translation_model, back_translation_model, text_generator, weights, num_beams, temperature):
-    print("Добро пожаловать в систему генерации ответов на основе искусственного интеллекта!")
-
-    # Настройки по умолчанию
+    # Настройки для генерации ответа
     settings = {
-        "max_length": 50,
-        "temperature": 1.0,
-        "top_k": 0,
+        "ensemble": False,
+        "back_translate": False,
+        "weights": None
     }
 
-    while True:
-        print("Выберите опцию:")
-        print("1. Задать вопрос")
-        print("2. Изменить настройки")
-        print("3. Выйти")
+    print_menu()
 
+    while True:
         user_choice = input("Введите номер опции: ")
 
         if user_choice == "1":
-            user_input = input("Введите ваш вопрос: ")
-            if user_input.lower() == "exit":
-                print("Спасибо за использование нашей системы. До свидания!")
-                break
-            else:
-                if not validate_input(user_input):
-                    print("Пожалуйста, введите корректный текст.")
-                    continue
-
-                response = process_user_input(
-                    device,
-                    settings,
-                    user_input,
-                    model,
-                    tokenizer,
-                    translation_service,
-                    back_translation_service,
-                    weights,
-                    num_beams=num_beams,
-                    temperature=temperature
-                )
-                print(f"Ответ: {response}")
-
+            print("Обучение модели...")
+            # код для обучения модели
         elif user_choice == "2":
-            print("Изменить настройки")
-            # Здесь можно добавить функционал для изменения настроек
-            print("Этот функционал пока не доступен")
-
+            user_input = input("Введите текст: ")
+            response = process_user_input(
+                user_input,
+                settings,
+                model,
+                tokenizer,
+                translation_service,
+                translation_model,
+                back_translation_model
+            )
+            print(f"Ответ: {response}")
         elif user_choice == "3":
-            print("Спасибо за использование нашей системы. До свидания!")
+            change_settings(settings)
+        elif user_choice == "4":
+            print_device_info()
+        elif user_choice == "5":
             break
-
         else:
-            print("Неверный ввод. Пожалуйста, введите номер одной из предложенных опций.")
+            print("Неверный ввод. Пожалуйста, введите корректный номер опции.")
+
+def change_settings(settings):
+    print("Доступные настройки для изменения:")
+    for key in settings:
+        print(f"{key}: {settings[key]}")
+    
+    setting_to_change = input("Введите настройку, которую вы хотите изменить: ")
+
+    if setting_to_change in settings:
+        new_value = input(f"Введите новое значение для {setting_to_change}: ")
+        try:
+            settings[setting_to_change] = float(new_value)
+        except ValueError:
+            print("Ошибка: введите корректное числовое значение.")
+
+'''def process_user_input(user_input, settings, model, tokenizer, translation_service, translation_model, back_translation_model, weights):
+    cleaned_input = clean_text(user_input)
+    if not validate_input(cleaned_input):
+        return "Ошибка: Введенный текст не соответствует требованиям."
+
+    translated_input = translation_service.translate_text(cleaned_input, translation_model)
+    generated_response = generate_response(translated_input, model, tokenizer, weights)
+
+    back_translated_response = translation_service.translate_text(generated_response, back_translation_model, reverse=True)
+    return back_translated_response
+'''

@@ -1,4 +1,4 @@
-#модуль resource_manager.py
+#модуль resource_manager
 import torch
 import tensorflow as tf
 from transformers import AutoTokenizer, AutoModelForCausalLM, MarianTokenizer, MarianMTModel, GPT2Tokenizer

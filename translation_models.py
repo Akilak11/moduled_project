@@ -1,9 +1,11 @@
-#модуль translation_models.py
+#модуль translation_models
 
 import torch
 import transformers
-from config import DEVICE, TRANSLATION_MAX_LENGTH, BACK_TRANSLATION_MODEL_NAME, TRANSLATION_MODEL_NAME
+from config import DEVICE, BACK_TRANSLATION_MODEL_NAME, TRANSLATION_MODEL_NAME
 from typing import List, Tuple
+
+TRANSLATION_MAX_LENGTH = 512
 
 class TranslationModel:
     def __init__(self, model_name: str = TRANSLATION_MODEL_NAME, device: torch.device = DEVICE):

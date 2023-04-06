@@ -1,20 +1,18 @@
 # модуль main
-import os
-import sys
 import torch
+import os
 import platform
-from colorama import init, Fore
-
+import sys
+import cpuinfo
+from config import PARAMETERS, DEVICE
 from load_models import load_models, load_translation_models
-from resource_manager import enable_memory_growth, clear_gpu_cache
-from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
-from text_processing import clean_text, extract_code_and_explanations, validate_input
+from translation import TranslationService
 from translation_models import TranslationModel
-from text_generator import TextGenerator
-from user_interface import user_interface
-from config import MODEL_NAMES, DEVICE, MAIN_MODEL, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, MODELS_PATH
+from user_interface import user_interface, change_settings, process_user_input
+from colorama import init, Fore
+from resource_manager import enable_memory_growth, clear_gpu_cache
 
-init()
+#init()
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
@@ -25,29 +23,29 @@ else:
 
 enable_memory_growth()
 
-models, tokenizers = load_models(MODEL_NAMES)
-translation_model = TranslationModel(TRANSLATION_MODEL_NAME, device)
-back_translation_model = TranslationModel(BACK_TRANSLATION_MODEL_NAME, device)
-text_generator = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE)
+# Загрузка моделей и токенизаторов
+model, tokenizer = load_models(PARAMETERS)
+translation_model, back_translation_model = load_translation_models(PARAMETERS)
 
+# Создание экземпляров TranslationService
+translation_service = TranslationService(PARAMETERS['translation_model_name'], PARAMETERS['device'])
 
-weights = [1.0, 0.8]
-num_beams = 5
-temperature = 1.0
-
-print("system_info: CPU = {}, RAM = {} GB, OS = {}, Python = {}".format(
-    platform.processor(),
-    round(os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / (1024 ** 3), 2),
-    platform.system(),
-    sys.version
-))
-
-print("Модели успешно загружены.")
+# Настройки для генерации ответа
+settings = {
+    'ensemble': False,  # Использовать ансамбль или нет
+    'back_translate': False,  # Использовать обратный перевод или нет
+    'weights': None  # Веса для ансамбля (если используется ансамбль)
+}
 
 if __name__ == "__main__":
-    print(f"Используется устройство: {device}")
-    main_model_index = MODEL_NAMES.index(MAIN_MODEL)
-    main_model, main_tokenizer = models[main_model_index], tokenizers[main_model_index]
-    user_interface(device, main_model, main_tokenizer, translation_model, back_translation_model, text_generator, weights, num_beams, temperature)
-
-clear_gpu_cache()
+    user_interface(
+        model,
+        tokenizer,
+        translation_service,
+        translation_model,
+        back_translation_model,
+        settings['weights'],
+        settings
+    )
+    
+#clear_gpu_cache()

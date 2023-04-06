@@ -1,4 +1,4 @@
-#модуль code_processing.py
+#модуль code_processing
 import re
 from typing import Tuple
 

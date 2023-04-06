@@ -1,4 +1,4 @@
-# модуль translation.py
+# модуль translation
 import transformers
 from config import TRANSLATION_MODEL_NAME, DEVICE
 

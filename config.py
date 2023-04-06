@@ -1,4 +1,4 @@
-# config.py
+# модуль config
 import torch
 import os
 import pathlib
@@ -39,6 +39,69 @@ MODELS_URL = "https://huggingface.co"
 
 TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
 BACK_TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
+
+PARAMETERS = [
+    {
+        "name": "TEMPERATURE",
+        "description": "Температура генерации текста",
+        "default_value": 1.0,
+        "applicable_models": ["all"]
+    },
+    {
+        "name": "MAX_LENGTH",
+        "description": "Максимальная длина ответа",
+        "default_value": 512,
+        "applicable_models": ["all"]
+    },
+    {
+        "name": "MIN_LENGTH",
+        "description": "Минимальная длина ответа",
+        "default_value": 1,
+        "applicable_models": ["all"]
+    },
+    {
+        "name": "TOP_K",
+        "description": "Количество верхних кандидатов для сэмплирования",
+        "default_value": 50,
+        "applicable_models": ["all"]
+    },
+    {
+        "name": "NUM_BEAMS",
+        "description": "Количество лучей для поиска лучшего пути",
+        "default_value": 5,
+        "applicable_models": ["all"]
+    },
+    {   "name": "BATCH_SIZE",
+        "description": "Размер пакета данных при обучении модел",
+        "default_value": 32,
+        "applicable_models": ["all"]
+    },
+    {   "name": "EPOCHS",
+        "description": "Количество эпох обучения модели",
+        "default_value": 10,
+        "applicable_models": ["all"]
+    },
+    {   "name": "LEARNING_RATE",
+        "description": "Cкорость обучения модели",
+        "default_value": 0.001,
+        "applicable_models": ["all"]
+    },
+    {   "name": "NUM_CLASSES",
+        "description": "Количество классов при обучении модели",
+        "default_value": 32,
+        "applicable_models": ["all"]
+    },
+    {   "name": "INPUT_SHAPE",
+        "description": "Форма входных данных при обучении модели",
+        "default_value": (28, 28, 1),
+        "applicable_models": ["all"]
+    },
+    {   "name": "NUM_BEAMS_GROUP",
+        "description": "Количество групп лучей при генерации текста. Каждая группа представляет собой набор лучей с одинаковыми начальными символами.",
+        "default_value": 5,
+        "applicable_models": ["all"]
+    }
+]
 
 # Encoder и Decoder модели
 ENCODER_MODEL_NAME = "encoder_model"

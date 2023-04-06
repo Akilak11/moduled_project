@@ -1,4 +1,4 @@
-#модуль text_processing.py
+#модуль text_processing
 import re
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
 from typing import Tuple
