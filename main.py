@@ -4,7 +4,7 @@ import os
 import platform
 import sys
 import cpuinfo
-from config import PARAMETERS, DEVICE
+import config
 from load_models import load_models, load_translation_models
 from translation import TranslationService
 from translation_models import TranslationModel
@@ -24,8 +24,8 @@ else:
 enable_memory_growth()
 
 # Загрузка моделей и токенизаторов
-model, tokenizer = load_models(PARAMETERS)
-translation_model, back_translation_model = load_translation_models(PARAMETERS)
+models, tokenizers = load_models(config.PARAMETERS)
+translation_model, back_translation_model = load_translation_models()
 
 # Создание экземпляров TranslationService
 translation_service = TranslationService(PARAMETERS['translation_model_name'], PARAMETERS['device'])

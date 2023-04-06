@@ -5,31 +5,14 @@ from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input, extract_code_and_explanations
 from translation import TranslationService
 from translation_models import TranslationModel
-from config import PARAMETERS, MODEL_NAMES, BACK_TRANSLATION_MODEL_NAME, TRANSLATION_MODEL_NAME
-from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
-
-
-MODEL_NAME = None
-for parameter in PARAMETERS:
-    if parameter["name"] == "model_name":
-        MODEL_NAME = parameter["default_value"]
-        break
-
-# Получение параметров из PARAMETERS
-MODEL_NAME = PARAMETERS['model_name']
-DEVICE = PARAMETERS['device']
-TRANSLATION_MODEL_NAME = PARAMETERS['translation_model_name']
-BACK_TRANSLATION_MODEL_NAME = PARAMETERS['back_translation_model_name']
-MAX_LENGTH = PARAMETERS['max_length']
-TEMPERATURE = PARAMETERS['temperature']
-NUM_BEAMS = PARAMETERS['num_beams']
+import config
 
 # Загрузка моделей и токенизаторов
-model, tokenizer = load_models(PARAMETERS)
-translation_model, back_translation_model = load_translation_models(PARAMETERS)
+model, tokenizer = load_models(config.PARAMETERS)
+translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
 # Создание экземпляров TranslationService
-translation_service = TranslationService(TRANSLATION_MODEL_NAME, DEVICE)
+translation_service = TranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
 
 def generate_response(user_prompt: str, ensemble: bool = False, back_translate: bool = False, weights=None):
     # Проверка ввода
@@ -73,17 +56,17 @@ def generate_response(user_prompt: str, ensemble: bool = False, back_translate: 
     return response
 
 def generate_response_with_pipeline(model, tokenizer, user_prompt):
-    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=DEVICE, num_beams=NUM_BEAMS, max_length=MAX_LENGTH, temperature=TEMPERATURE)
+    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=config.DEVICE, num_beams=config.NUM_BEAMS, max_length=config.MAX_LENGTH, temperature=config.TEMPERATURE)
     response = generator(user_prompt)[0]['generated_text']
     return response
 
 def generate_response_with_beam_search(model, tokenizer, user_prompt):
-    input_ids = tokenizer.encode(user_prompt, return_tensors="pt").to(DEVICE)
+    input_ids = tokenizer.encode(user_prompt, return_tensors="pt").to(config.DEVICE)
     output = model.generate(
         input_ids,
-        max_length=MAX_LENGTH,
-        num_beams=NUM_BEAMS,
-        temperature=TEMPERATURE,
+        max_length=config.MAX_LENGTH,
+        num_beams=config.NUM_BEAMS,
+        temperature=config.TEMPERATURE,
         no_repeat_ngram_size=2,
         early_stopping=True,
     )

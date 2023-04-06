@@ -72,7 +72,7 @@ PARAMETERS = [
         "applicable_models": ["all"]
     },
     {   "name": "BATCH_SIZE",
-        "description": "Размер пакета данных при обучении модел",
+        "description": "Размер пакета данных при обучении модели",
         "default_value": 32,
         "applicable_models": ["all"]
     },

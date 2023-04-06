@@ -87,7 +87,7 @@ def change_settings(settings):
         except ValueError:
             print("Ошибка: введите корректное числовое значение.")
 
-'''def process_user_input(user_input, settings, model, tokenizer, translation_service, translation_model, back_translation_model, weights):
+def process_user_input(user_input, settings, model, tokenizer, translation_service, translation_model, back_translation_model, weights):
     cleaned_input = clean_text(user_input)
     if not validate_input(cleaned_input):
         return "Ошибка: Введенный текст не соответствует требованиям."
@@ -97,4 +97,4 @@ def change_settings(settings):
 
     back_translated_response = translation_service.translate_text(generated_response, back_translation_model, reverse=True)
     return back_translated_response
-'''
+
