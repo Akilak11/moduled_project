@@ -6,7 +6,7 @@ from config import DEVICE, TRANSLATION_MAX_LENGTH, BACK_TRANSLATION_MODEL_NAME, 
 from typing import List, Tuple
 
 class TranslationModel:
-    def __init__(self, model_name: str, device: torch.device = None):
+    def __init__(self, model_name: str = TRANSLATION_MODEL_NAME, device: torch.device = DEVICE):
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
         self.model = transformers.AutoModelForSeq2SeqLM.from_pretrained(model_name).to(device)
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -43,6 +43,8 @@ class TranslationModel:
         self.model.cpu()
         torch.cuda.empty_cache()
 
-# ...
+#...
 
 # Ваши другие функции и код для ансамблей моделей, если они нужны.
+
+

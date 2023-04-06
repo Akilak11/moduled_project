@@ -3,10 +3,10 @@
 import transformers
 import torch
 from typing import List, Union
-from config import DEVICE, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE
+#from config import DEVICE, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE
 
 class TextGenerator:
-    def __init__(self, encoder_model_name: str, decoder_model_name: str, device: str):
+    def __init__(self, encoder_model_name: str, decoder_model_name: str, device: str, generation_max_length: int, generation_min_length: int, generation_temperature: float):
         self.encoder_tokenizer = transformers.AutoTokenizer.from_pretrained(encoder_model_name)
         self.decoder_tokenizer = transformers.AutoTokenizer.from_pretrained(decoder_model_name)
         self.encoder_model = transformers.AutoModel.from_pretrained(encoder_model_name).to(device)
@@ -14,6 +14,9 @@ class TextGenerator:
         self.encoder_model.eval()
         self.decoder_model.eval()
         self.device = device
+        self.generation_max_length = generation_max_length
+        self.generation_min_length = generation_min_length
+        self.generation_temperature = generation_temperature
 
     def generate_response(self, input_text: Union[str, List[str]]) -> Union[str, List[str]]:
         if isinstance(input_text, str):
@@ -28,10 +31,10 @@ class TextGenerator:
         # Генерация текста на основе векторного представления
         generated_sequences = self.decoder_model.generate(
             input_ids=None,
-            max_length=GENERATION_MAX_LENGTH,
-            min_length=GENERATION_MIN_LENGTH,
+            max_length=self.generation_max_length,
+            min_length=self.generation_min_length,
             num_return_sequences=1,
-            temperature=GENERATION_TEMPERATURE,
+            temperature=self.generation_temperature,
             pad_token_id=self.decoder_tokenizer.pad_token_id,
             bos_token_id=self.decoder_tokenizer.bos_token_id,
             eos_token_id=self.decoder_tokenizer.eos_token_id,
@@ -60,5 +63,3 @@ class TextGenerator:
 
     def __call__(self, input_text: Union[str, List[str]]) -> Union[str, List[str]]:
         return self.generate_response(input_text)
-
-text_generator = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE)

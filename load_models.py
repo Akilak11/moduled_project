@@ -1,21 +1,18 @@
-# модуль load_models.py
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, MarianTokenizer, MarianMTModel, GPT2Tokenizer, GPTNeoForCausalLM, GPT2LMHeadModel
-from config import MAIN_MODEL, MODEL_PATHS, model_names
-from utils import check_model_files, download_model
+from config import MODELS_PATH, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
+from utils import setup_models
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def load_models(model_names):
+    setup_models()
+
     models = []
     tokenizers = []
 
     for model_name in model_names:
-        model_path = config.MODEL_PATHS.get(model_name, model_name)
-
-        if not check_model_files(model_name, model_path):
-            print(f"Проверка файлов модели {model_name} не пройдена. Начинаю скачивание модели.")
-            download_model(model_name, model_path)
+        model_path = MODELS_PATH / model_name
 
         if model_name == "EleutherAI/gpt-neo-2.7B":
             model = GPTNeoForCausalLM.from_pretrained(model_path).to(device)
@@ -34,10 +31,9 @@ def load_models(model_names):
 
     return models, tokenizers
 
-
 def load_translation_models():
-    translation_model_name = "Helsinki-NLP/opus-mt-ru-en"
-    back_translation_model_name = "Helsinki-NLP/opus-mt-en-ru"
+    translation_model_name = TRANSLATION_MODEL_NAME
+    back_translation_model_name = BACK_TRANSLATION_MODEL_NAME
 
     translation_tokenizer = MarianTokenizer.from_pretrained(translation_model_name)
     translation_model = MarianMTModel.from_pretrained(translation_model_name).to(device)

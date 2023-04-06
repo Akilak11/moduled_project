@@ -1,8 +1,9 @@
-#модуль translation.py
+# модуль translation.py
 import transformers
+from config import TRANSLATION_MODEL_NAME, DEVICE
 
 class TranslationService:
-    def __init__(self, model_name, device):
+    def __init__(self, model_name=TRANSLATION_MODEL_NAME, device=DEVICE):
         self.model_name = model_name
         self.device = device
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
@@ -28,3 +29,4 @@ class TranslationService:
 
     def __call__(self, text, max_length=512):
         return self.translate(text, max_length)
+

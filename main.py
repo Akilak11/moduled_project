@@ -9,10 +9,10 @@ from load_models import load_models, load_translation_models
 from resource_manager import enable_memory_growth, clear_gpu_cache
 from code_processing import separate_code_and_explanations, combine_code_and_translated_explanations
 from text_processing import clean_text, extract_code_and_explanations, validate_input
-from translation_models import TranslationModel, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
-from text_generator import TextGenerator, ENCODER_MODEL_NAME, DECODER_MODEL_NAME
+from translation_models import TranslationModel
+from text_generator import TextGenerator
 from user_interface import user_interface
-from config import MODEL_NAMES, DEVICE, MAIN_MODEL
+from config import MODEL_NAMES, DEVICE, MAIN_MODEL, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, MODELS_PATH
 
 init()
 
@@ -28,7 +28,8 @@ enable_memory_growth()
 models, tokenizers = load_models(MODEL_NAMES)
 translation_model = TranslationModel(TRANSLATION_MODEL_NAME, device)
 back_translation_model = TranslationModel(BACK_TRANSLATION_MODEL_NAME, device)
-text_generator = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE)
+text_generator = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE)
+
 
 weights = [1.0, 0.8]
 num_beams = 5
@@ -44,7 +45,6 @@ print("system_info: CPU = {}, RAM = {} GB, OS = {}, Python = {}".format(
 print("Модели успешно загружены.")
 
 if __name__ == "__main__":
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Используется устройство: {device}")
     main_model_index = MODEL_NAMES.index(MAIN_MODEL)
     main_model, main_tokenizer = models[main_model_index], tokenizers[main_model_index]

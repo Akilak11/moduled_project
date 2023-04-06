@@ -1,17 +1,17 @@
 # модуль generate_response.py
 from transformers import pipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, GPTNeoForCausalLM, GPT2Tokenizer
 from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input
 from text_generator import TextGenerator
 from translation_models import TranslationModel
 from translation import TranslationService
-from config import ENCODER_MODEL_NAME, DECODER_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, model_names, DEVICE
+from config import ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME
 
+text_generator_instance = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, DEVICE, GENERATION_MAX_LENGTH, GENERATION_MIN_LENGTH, GENERATION_TEMPERATURE)
 
 # Создание экземпляров TranslationService, TextGenerator и TranslationModel
-translation_service = TranslationService("Helsinki-NLP/opus-mt-en-ru", "cuda")
-text_generator_instance = TextGenerator(ENCODER_MODEL_NAME, DECODER_MODEL_NAME, "cuda")
+translation_service = TranslationService(TRANSLATION_MODEL_NAME, DEVICE)
 back_translation_model = TranslationModel(BACK_TRANSLATION_MODEL_NAME, DEVICE)
 
 def generate_response(user_prompt: str, model_names: list, ensemble: bool = False,
