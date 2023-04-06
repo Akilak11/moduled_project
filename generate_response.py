@@ -1,4 +1,4 @@
-# модуль generate_response.py
+# модуль generate_response
 from transformers import pipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer, GPTNeoForCausalLM, GPT2Tokenizer
 from load_models import load_models, load_translation_models
@@ -54,8 +54,8 @@ def generate_response(user_prompt: str, model_names: list, ensemble: bool = Fals
 
 
 def generate_response_with_pipeline(model_name, user_prompt, num_beams=5, temperature=1.0, **kwargs):
-    model, tokenizer = load_models(model_name)
-    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=0, num_beams=num_beams, max_length=1024, temperature=temperature, **kwargs)
+    model, tokenizer = load_models([model_name])
+    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=DEVICE, num_beams=num_beams, max_length=1024, temperature=temperature, **kwargs)
     response = generator(user_prompt)[0]['generated_text']
     return response
 

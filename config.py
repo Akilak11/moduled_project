@@ -35,6 +35,8 @@ MODEL_PATHS.update({
     model_name: MODELS_PATH / "mytrain_models" / model_name for model_name in MODEL_NAMES["mytrained"]
 })
 
+MODELS_URL = "https://huggingface.co"
+
 TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
 BACK_TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
 

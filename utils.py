@@ -47,7 +47,7 @@ def download_models(models_path, model_names, base_url):
 
         with ThreadPoolExecutor(max_workers=5) as executor:
             for file in files_to_download:
-                url = f"{base_url}/{model_name}/{file}"
+                url = f"{base_url}/{model_name}/resolve/main/{file}"
                 target_path = model_dir / file
 
                 if not target_path.exists() or (is_file_available(url) and check_file_size(target_path) != int(requests.head(url).headers.get("Content-Length", 0))):
