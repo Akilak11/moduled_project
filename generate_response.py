@@ -91,7 +91,7 @@ def generate_response_with_sampling(model, tokenizer, user_prompt):
 
 weights = config.PARAMETERS
 
-'''def ensemble_predictions(predictions, weights):
+def ensemble_predictions(predictions, weights):
 
     #weights = config.PARAMETERS
     
@@ -104,4 +104,4 @@ weights = config.PARAMETERS
 
     ensemble_prediction = sum(prediction * weight for prediction, weight in zip(predictions, weights)) / sum(weights)
     return ensemble_prediction
-'''
+
