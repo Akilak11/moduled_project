@@ -6,8 +6,8 @@ import sys
 import cpuinfo
 import config
 from load_models import load_models, load_translation_models
-from translation import TranslationService
-from translation_models import TranslationModel
+from translation import ForwardTranslationService, BackTranslationService
+#from translation_model import TranslationModel
 from user_interface import user_interface, change_settings, process_user_input
 from colorama import init, Fore
 from resource_manager import enable_memory_growth, clear_gpu_cache
@@ -25,10 +25,11 @@ enable_memory_growth()
 
 # Загрузка моделей и токенизаторов
 models, tokenizers = load_models(config.PARAMETERS)
-translation_model, back_translation_model = load_translation_models()
+translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
 # Создание экземпляров TranslationService
-translation_service = TranslationService(PARAMETERS['translation_model_name'], PARAMETERS['device'])
+forward_translation_service = ForwardTranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
+back_translation_service = BackTranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
 
 # Настройки для генерации ответа
 settings = {
@@ -38,14 +39,6 @@ settings = {
 }
 
 if __name__ == "__main__":
-    user_interface(
-        model,
-        tokenizer,
-        translation_service,
-        translation_model,
-        back_translation_model,
-        settings['weights'],
-        settings
-    )
-    
+    user_interface()
+
 #clear_gpu_cache()

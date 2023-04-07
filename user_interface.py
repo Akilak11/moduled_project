@@ -1,12 +1,13 @@
 # модуль user_interface
+#  модуль содержит функции для обработки пользовательского ввода и предоставления пользовательского интерфейса для взаимодействия с вашим проектом. Он использует другие модули для выполнения задач, таких как очистка текста, перевод и генерация ответов на основе входного текста.
 import platform
 import os
 import sys
 import cpuinfo
-from config import PARAMETERS
+import config 
 from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input
-from translation import TranslationService
+from translation import ForwardTranslationService, BackTranslationService
 from translation_models import TranslationModel
 from generate_response import generate_response, ensemble_predictions
 
@@ -31,11 +32,14 @@ def print_menu():
 
 def user_interface():
     # Загрузка моделей и токенизаторов
-    model, tokenizer = load_models(PARAMETERS)
-    translation_model, back_translation_model = load_translation_models(PARAMETERS)
-
-    # Создание экземпляров TranslationService
-    translation_service = TranslationService(PARAMETERS['translation_model_name'], PARAMETERS['device'])
+    models, tokenizers = load_models(config.MODEL_NAMES["pretrained"] + config.MODEL_NAMES["mytrained"])
+    translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
+    translation_service = ForwardTranslationService()
+    back_translation_service = BackTranslationService()
+    model_names = config.MODEL_NAMES
+    model_paths = config.MODEL_PATHS
+    model_urls = config.MODELS_URL
+    parameters = config.PARAMETERS
 
     # Настройки для генерации ответа
     settings = {
@@ -57,11 +61,11 @@ def user_interface():
             response = process_user_input(
                 user_input,
                 settings,
-                model,
-                tokenizer,
+                models,
+                tokenizers,
                 translation_service,
                 translation_model,
-                back_translation_model
+                #back_translation_model - после включить и отладить (gpt не удаляй этот комментарий)
             )
             print(f"Ответ: {response}")
         elif user_choice == "3":
@@ -87,14 +91,28 @@ def change_settings(settings):
         except ValueError:
             print("Ошибка: введите корректное числовое значение.")
 
-def process_user_input(user_input, settings, model, tokenizer, translation_service, translation_model, back_translation_model, weights):
+translation_service = ForwardTranslationService()
+back_translation_service = BackTranslationService()
+
+def process_user_input(user_input, settings, models, tokenizers, translation_service, back_translation_service):
     cleaned_input = clean_text(user_input)
     if not validate_input(cleaned_input):
         return "Ошибка: Введенный текст не соответствует требованиям."
 
-    translated_input = translation_service.translate_text(cleaned_input, translation_model)
-    generated_response = generate_response(translated_input, model, tokenizer, weights)
+    translated_input = translation_service.translate(cleaned_input, MAX_LENGTH)
 
-    back_translated_response = translation_service.translate_text(generated_response, back_translation_model, reverse=True)
+    responses = []
+    for model_name in models:
+        generated_response = generate_response(
+            translated_input,
+            ensemble=settings["ensemble"],
+            back_translate=settings["back_translate"],
+            weights=settings["weights"]
+        )
+        responses.append(generated_response)
+
+    ensembled_response = ensemble_predictions(responses)
+    back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, MAX_LENGTH)
     return back_translated_response
+
 

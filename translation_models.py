@@ -1,5 +1,5 @@
 #модуль translation_models
-
+#translation_models.py: Этот модуль содержит два класса, TranslationModel и BackTranslationModel, которые используют предобученные модели перевода (например, mBART или T2T) для выполнения перевода и обратного перевода текста между языками. Этот модуль, вероятно, был создан для реализации функциональности машинного перевода, а также для использования обратного перевода в качестве аугментации данных или улучшения генерации текста.
 import torch
 import transformers
 from config import DEVICE, BACK_TRANSLATION_MODEL_NAME, TRANSLATION_MODEL_NAME

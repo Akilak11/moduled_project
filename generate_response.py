@@ -3,7 +3,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, GPTNeoForCausalLM,
 from transformers import pipeline
 from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input, extract_code_and_explanations
-from translation import TranslationService
+from translation import ForwardTranslationService, BackTranslationService
 from translation_models import TranslationModel
 import config
 
@@ -12,7 +12,8 @@ model, tokenizer = load_models(config.PARAMETERS)
 translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
 # Создание экземпляров TranslationService
-translation_service = TranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
+forward_translation_service = ForwardTranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
+back_translation_service = BackTranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
 
 def generate_response(user_prompt: str, ensemble: bool = False, back_translate: bool = False, weights=None):
     # Проверка ввода
