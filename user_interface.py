@@ -98,8 +98,9 @@ def process_user_input(user_input, settings, models, tokenizers, translation_ser
     cleaned_input = clean_text(user_input)
     if not validate_input(cleaned_input):
         return "Ошибка: Введенный текст не соответствует требованиям."
-
-    translated_input = translation_service.translate(cleaned_input, MAX_LENGTH)
+    
+    max_length = config.PARAMETERS
+    translated_input = translation_service.translate(cleaned_input, max_length)
 
     responses = []
     for model_name in models:
@@ -112,7 +113,7 @@ def process_user_input(user_input, settings, models, tokenizers, translation_ser
         responses.append(generated_response)
 
     ensembled_response = ensemble_predictions(responses)
-    back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, MAX_LENGTH)
+    back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, max_length)
     return back_translated_response
 
 
