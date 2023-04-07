@@ -9,7 +9,8 @@ from load_models import load_models, load_translation_models
 from text_processing import clean_text, validate_input
 from translation import ForwardTranslationService, BackTranslationService
 from translation_models import TranslationModel
-from generate_response import generate_response, ensemble_predictions
+#from generate_response import generate_response, ensemble_predictions
+from generate_response import generate_response #вернуть ensemble_predictions, когда все заработает
 
 # Получить информацию о процессоре
 info = cpuinfo.get_cpu_info()
@@ -112,8 +113,9 @@ def process_user_input(user_input, settings, models, tokenizers, translation_ser
         )
         responses.append(generated_response)
 
-    ensembled_response = ensemble_predictions(responses)
-    back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, max_length)
+    #ensembled_response = ensemble_predictions(responses)
+    #back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, max_length) - временно удалил ensembled_response
+    back_translated_response = back_translation_service.back_translate(translation_service, max_length)
     return back_translated_response
 
 
