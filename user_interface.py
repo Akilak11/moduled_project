@@ -66,8 +66,7 @@ def user_interface():
                 models,
                 tokenizers,
                 translation_service,
-                translation_model,
-                back_translation_model - после включить и отладить (gpt не удаляй этот комментарий)
+                back_translation_service
             )
             print(f"Ответ: {response}")
         elif user_choice == "3":
@@ -114,7 +113,7 @@ def process_user_input(user_input, settings, models, tokenizers, translation_ser
         )
         responses.append(generated_response)
 
-    ensembled_response = ensemble_predictions(responses)
+    ensembled_response = ensemble_predictions(responses, settings["weights"])
     back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, max_length)
 
 
