@@ -47,11 +47,6 @@ def user_interface():
     settings = {
         "ensemble": False,
         "back_translate": False,
-        "weights": None
-    }
-    settings = {
-        "ensemble": False,
-        "back_translate": False,
         "TEMPERATURE": config.PARAMETERS[0]["default_value"],
         "MAX_LENGTH": config.PARAMETERS[1]["default_value"],
         "MIN_LENGTH": config.PARAMETERS[2]["default_value"],
@@ -63,8 +58,8 @@ def user_interface():
         "NUM_CLASSES": config.PARAMETERS[8]["default_value"],
         "INPUT_SHAPE": config.PARAMETERS[9]["default_value"],
         "NUM_BEAMS_GROUP": config.PARAMETERS[10]["default_value"],
-        "WEIGHTS": config.PARAMETERS[11]["default_value"],
-}
+        "WEIGHTS": config.PARAMETERS[11]["weights"],
+    }
 
     print_menu()
 
