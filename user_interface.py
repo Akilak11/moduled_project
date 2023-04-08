@@ -49,6 +49,22 @@ def user_interface():
         "back_translate": False,
         "weights": None
     }
+    settings = {
+        "ensemble": False,
+        "back_translate": False,
+        "TEMPERATURE": config.PARAMETERS[0]["default_value"],
+        "MAX_LENGTH": config.PARAMETERS[1]["default_value"],
+        "MIN_LENGTH": config.PARAMETERS[2]["default_value"],
+        "TOP_K": config.PARAMETERS[3]["default_value"],
+        "NUM_BEAMS": config.PARAMETERS[4]["default_value"],
+        "BATCH_SIZE": config.PARAMETERS[5]["default_value"],
+        "EPOCHS": config.PARAMETERS[6]["default_value"],
+        "LEARNING_RATE": config.PARAMETERS[7]["default_value"],
+        "NUM_CLASSES": config.PARAMETERS[8]["default_value"],
+        "INPUT_SHAPE": config.PARAMETERS[9]["default_value"],
+        "NUM_BEAMS_GROUP": config.PARAMETERS[10]["default_value"],
+        "WEIGHTS": config.PARAMETERS[11]["default_value"],
+}
 
     print_menu()
 
