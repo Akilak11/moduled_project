@@ -11,6 +11,8 @@ from translation import ForwardTranslationService, BackTranslationService
 from translation_models import TranslationModel
 from generate_response import generate_response, ensemble_predictions
 
+
+
 # Получить информацию о процессоре
 info = cpuinfo.get_cpu_info()
 
@@ -114,5 +116,6 @@ def process_user_input(user_input, settings, models, tokenizers, translation_ser
 
     ensembled_response = ensemble_predictions(responses)
     back_translated_response = back_translation_service.back_translate(ensembled_response, translation_service, max_length)
+
 
 

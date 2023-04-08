@@ -93,7 +93,7 @@ weights = config.PARAMETERS
 
 def ensemble_predictions(predictions, weights):
 
-    #weights = config.PARAMETERS
+    weights = config.PARAMETERS
     
     if len(predictions) != len(weights):
         raise ValueError("Количество предсказаний и весов должно совпадать")
@@ -104,4 +104,3 @@ def ensemble_predictions(predictions, weights):
 
     ensemble_prediction = sum(prediction * weight for prediction, weight in zip(predictions, weights)) / sum(weights)
     return ensemble_prediction
-
