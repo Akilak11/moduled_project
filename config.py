@@ -5,43 +5,49 @@ import pathlib
 from pathlib import Path
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODELS_PATH = pathlib.Path("/mnt/c/Python_project/moduled_project/models")
 
-# Веса моделей - Основная модель весит больше - 0.7, следующие 2 по 0.3, а остальные по формулей уменьшения весов последующих, от последнего веса константы. 
-MODEL_NAMES = { 
+MODELS_PATH = pathlib.Path("/mnt/c/Python_project/models")
+
+# Переменная MODEL_NAMES должна быть выше MODEL_PATHS - потому-что она должна уже учавствует в определении MODEL_PATHS
+MODEL_NAMES = {
     "pretrained": [
-    "EleutherAI/gpt-neo-2.7B",
-    "bert-base-uncased",
-    "google_mt5-small",
-    "google_mt5-xxl",
-    "gpt2",
-    "Helsinki-NLP/opus-mt-en-ru",
-    "Helsinki-NLP/opus-mt-ru-en",
-    "roberta-base",
-    "rubert_cased_L-12_H-768_A-12_v2",
-    "sberbank-ai_ruclip-vit-large-patch14-336",
-    "transfo-xl-wt103",
-    "wmt19-en-ru",
-    "wmt19-ru-en",
+        {"EleutherAI": ["gpt-neo-2.7B"]},
+        "bert-base-uncased",
+        "google_mt5-small",
+        "google_mt5-xxl",
+        "gpt2",
+        {"Helsinki-NLP": ["opus-mt-en-ru", "opus-mt-ru-en"]},
+        "roberta-base",
+        "rubert_cased_L-12_H-768_A-12_v2",
+        "sberbank-ai_ruclip-vit-large-patch14-336",
+        "transfo-xl-wt103",
+        "wmt19-en-ru",
+        "wmt19-ru-en",
     ],
     "mytrained": [
         # ... (названия ваших собственных обученных моделей)
     ]
 }
 
-MODEL_PATHS = {
-    model_name: MODELS_PATH / "pretrain_models" / model_name for model_name in MODEL_NAMES["pretrained"]
+# Переменная MODEL_NAMES должна быть выше MODEL_PATHS - потому-что она должна уже учавствует в определении MODEL_PATHS
+PRETRAINED_MODELS_PATH = MODELS_PATH / "pretrain_models"
+MYTRAINED_MODELS_PATH = MODELS_PATH / "mytrain_models"
+
+PRETRAINED_MODEL_PATHS = {
+    model_name: (PRETRAINED_MODELS_PATH.joinpath(model_name) if key is None else PRETRAINED_MODELS_PATH.joinpath(key, model_name))
+    for model_name_dict in MODEL_NAMES["pretrained"]
+    for key, model_name_list in (model_name_dict.items() if isinstance(model_name_dict, dict) else [(None, [model_name_dict])])
+    for model_name in model_name_list
 }
-MODEL_PATHS.update({
-    model_name: MODELS_PATH / "mytrain_models" / model_name for model_name in MODEL_NAMES["mytrained"]
-})
+
+MYTRAINED_MODEL_PATHS = {
+    model_name: MYTRAINED_MODELS_PATH.joinpath(model_name) for model_name in MODEL_NAMES["mytrained"]
+}
 
 MODELS_URL = "https://huggingface.co"
 
 TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
 BACK_TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
-
-
 
 #Функция придающая веса по формуле Основная модель весит больше - 0.7, следующие 2 по 0.3, а остальные по формуле уменьшения весов последующих, от последнего веса константы на 30%. То есть по сути цикл - уменьшения весов моделей. Верхняя модель в списке - основная, чем ниже, тем меньше вес.
 def calculate_weights(num_models, main_weight=0.7, secondary_weights=[0.3, 0.3], decay_rate=0.3):

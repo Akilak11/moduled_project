@@ -1,39 +1,59 @@
 # модуль load_models
 import torch
+import os
 from pathlib import Path
+import transformers
+#from transformers import AutoTokenizer, AutoModelForCausalLM, MarianTokenizer, MarianMTModel, GPT2Tokenizer, GPTNeoForCausalLM
+from config import MODELS_PATH, PRETRAINED_MODEL_PATHS, MYTRAINED_MODEL_PATHS, MODEL_NAMES, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, DEVICE, MODELS_URL
+from utils import is_file_available, download_models, is_model_available_locally
+
 from transformers import AutoTokenizer, AutoModelForCausalLM, MarianTokenizer, MarianMTModel, GPT2Tokenizer, GPTNeoForCausalLM, GPT2LMHeadModel
-from config import MODELS_PATH, MODEL_NAMES, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, DEVICE
-from utils import setup_models, is_file_available, download_models
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def load_models(model_names_list):
-    models = []
-    tokenizers = []
+def load_model(model_name, model_paths):
+    model_path = model_paths[model_name]
 
+    if not is_model_available_locally(model_path):
+        print(f"Model {model_name} not found in local storage. Downloading from Hugging Face Hub...")
+        download_models(model_path.parent, [model_name], MODELS_URL)
+
+    if model_name == "EleutherAI/gpt-neo-2.7B":
+        model = GPTNeoForCausalLM.from_pretrained(model_path).to(DEVICE)
+        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    elif model_name == "gpt2":
+        model = GPT2LMHeadModel.from_pretrained(model_path).to(DEVICE)
+        tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+    else:
+        model = AutoModelForCausalLM.from_pretrained(model_path).to(DEVICE)
+        tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+    tokenizer.pad_token = tokenizer.eos_token  # Устанавливаем pad_token равным eos_token
+
+    return model, tokenizer
+
+def load_models(model_names_list, model_paths):
+    models, tokenizers = [], []
     for model_name in model_names_list:
-        for name, model_id in MODEL_NAMES.items():
-            if name == model_name:
-                model_path = MODELS_PATH / model_id
+        model, tokenizer = load_model(model_name, model_paths)
+        models.append(model)
+        tokenizers.append(tokenizer)
 
-                # Check if the model files exist in the cache and download them if not
-                download_models(model_path.parent, [model_name], MODELS_URL)
+    print("Модели загруженные в load_models: ", models)
+    print("Токенизеры загруженные в load_models: ", tokenizers)
 
-                if model_name == "EleutherAI/gpt-neo-2.7B":
-                    model = GPTNeoForCausalLM.from_pretrained(model_path, cache_dir=model_path).to(DEVICE)
-                    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-                elif model_name == "gpt2":
-                    model = GPT2LMHeadModel.from_pretrained(model_path, cache_dir=model_path).to(DEVICE)
-                    tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-                else:
-                    model = AutoModelForCausalLM.from_pretrained(model_path, cache_dir=model_path).to(DEVICE)
-                    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    assert len(models) > 0, "Список моделей пуст"
+    assert len(tokenizers) > 0, "Список токенизеров пуст"
+    return models, tokenizers
 
-                tokenizer.pad_token = tokenizer.eos_token  # Устанавливаем pad_token равным eos_token
+def load_pretrained_models():
+    pretrained_model_names = [model_name for model_name_dict in MODEL_NAMES["pretrained"] for key, model_name_list in (model_name_dict.items() if isinstance(model_name_dict, dict) else [(None, [model_name_dict])]) for model_name in model_name_list]
+    models, tokenizers = load_models(pretrained_model_names, PRETRAINED_MODEL_PATHS)
+    return models, tokenizers
 
-                models.append(model)
-                tokenizers.append(tokenizer)
-
+def load_mytrained_models():
+    mytrained_model_names = MODEL_NAMES["mytrained"]
+    models, tokenizers = load_models(mytrained_model_names, MYTRAINED_MODEL_PATHS)
     return models, tokenizers
 
 def load_translation_models():

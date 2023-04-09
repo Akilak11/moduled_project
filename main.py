@@ -5,9 +5,10 @@ import platform
 import sys
 import cpuinfo
 import config
-from load_models import load_models, load_translation_models
+#import transformers
+from load_models import load_models, load_translation_models, load_pretrained_models
 from translation import ForwardTranslationService, BackTranslationService
-#from translation_model import TranslationModel
+from translation_models import TranslationModel
 from user_interface import user_interface, change_settings, process_user_input
 from colorama import init, Fore
 from resource_manager import enable_memory_growth, clear_gpu_cache
@@ -24,12 +25,12 @@ else:
 enable_memory_growth()
 
 # Загрузка моделей и токенизаторов
-models, tokenizers = load_models(config.PARAMETERS)
+models, tokenizers = load_pretrained_models()
 translation_model, translation_tokenizer, back_translation_model, back_translation_tokenizer = load_translation_models()
 
 # Создание экземпляров TranslationService
-forward_translation_service = ForwardTranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
-back_translation_service = BackTranslationService(config.TRANSLATION_MODEL_NAME, config.DEVICE)
+forward_translation_service = ForwardTranslationService(config.TRANSLATION_MODEL_NAME, device)
+back_translation_service = BackTranslationService(config.TRANSLATION_MODEL_NAME, device)
 
 # Настройки для генерации ответа
 settings = {
