@@ -6,7 +6,7 @@ from pathlib import Path
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-MODELS_PATH = pathlib.Path("/mnt/c/Python_project/models")
+MODELS_PATH = pathlib.Path("C:\Python_project\models")
 
 # Переменная MODEL_NAMES должна быть выше MODEL_PATHS - потому-что она должна уже учавствует в определении MODEL_PATHS
 MODEL_NAMES = {
