@@ -6,11 +6,12 @@ from pathlib import Path
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-MODELS_PATH = pathlib.Path("C:\Python_project\models")
+MODELS_PATH = pathlib.Path("/mnt/c/Python_project/moduled_project/models")
 
 # Переменная MODEL_NAMES должна быть выше MODEL_PATHS - потому-что она должна уже учавствует в определении MODEL_PATHS
 MODEL_NAMES = {
     "pretrained": [
+        {"bigcode": ["gpt_bigcode-santacoder"]},
         {"EleutherAI": ["gpt-neo-2.7B"]},
         "bert-base-uncased",
         "google_mt5-small",
@@ -46,8 +47,8 @@ MYTRAINED_MODEL_PATHS = {
 
 MODELS_URL = "https://huggingface.co"
 
-TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-ru-en"
-BACK_TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
+TRANSLATION_MODEL_NAME = "wmt19-ru-en"
+BACK_TRANSLATION_MODEL_NAME = "wmt19-en-ru"
 
 #Функция придающая веса по формуле Основная модель весит больше - 0.7, следующие 2 по 0.3, а остальные по формуле уменьшения весов последующих, от последнего веса константы на 30%. То есть по сути цикл - уменьшения весов моделей. Верхняя модель в списке - основная, чем ниже, тем меньше вес.
 def calculate_weights(num_models, main_weight=0.7, secondary_weights=[0.3, 0.3], decay_rate=0.3):
@@ -130,6 +131,16 @@ PARAMETERS = [
     {   "name": "WEIGHTS",
         "description": "Веса моделей в ансамбле предсказаний, не путать с весами внутри моделей",
         "default_value": weights,
+        "applicable_models": ["all"]
+    },
+    {   "name": "MAX_MODELS_COUNT",
+        "description": "Максимальное количество моделей для использования",
+        "default_value": 3,
+        "applicable_models": ["all"]
+    },
+    {   "name": "MODELS_COUNT",
+        "description": "Количество моделей для использования",
+        "default_value": 1,
         "applicable_models": ["all"]
     }
 ]

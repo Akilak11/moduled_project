@@ -118,8 +118,6 @@ packaging==23.0
 pandas==1.5.3
 pathlib==1.0.1
 pathtools==0.1.2
-# Editable install with no version control (peft==0.3.0.dev0)
--e /mnt/c/gpt4all/gpt4all/peft
 Pillow==9.4.0
 platformdirs==3.2.0
 portalocker==2.7.0

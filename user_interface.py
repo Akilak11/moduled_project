@@ -36,6 +36,13 @@ def print_menu():
     print("4. Информация о текущем оборудовании")
     print("5. Выход")
 
+def change_models_count():
+    count = int(input("Введите количество моделей, которые нужно использовать (максимум {0}): ".format(config.MAX_MODELS_COUNT)))
+    if count > config.MAX_MODELS_COUNT:
+        print("Максимальное количество моделей для использования: {0}".format(config.MAX_MODELS_COUNT))
+        return None
+    return count
+
 def user_interface():
     # Загрузка моделей и токенизаторов
     models, tokenizers = load_pretrained_models()
@@ -60,18 +67,19 @@ def user_interface():
         "ensemble": False,
         "back_translate": False,
          "weights": weights,
-        "TEMPERATURE": config.PARAMETERS[0]["default_value"],
-        "MAX_LENGTH": config.PARAMETERS[1]["default_value"],
-        "MIN_LENGTH": config.PARAMETERS[2]["default_value"],
-        "TOP_K": config.PARAMETERS[3]["default_value"],
-        "NUM_BEAMS": config.PARAMETERS[4]["default_value"],
-        "BATCH_SIZE": config.PARAMETERS[5]["default_value"],
-        "EPOCHS": config.PARAMETERS[6]["default_value"],
-        "LEARNING_RATE": config.PARAMETERS[7]["default_value"],
-        "NUM_CLASSES": config.PARAMETERS[8]["default_value"],
-        "INPUT_SHAPE": config.PARAMETERS[9]["default_value"],
-        "NUM_BEAMS_GROUP": config.PARAMETERS[10]["default_value"],
-        "WEIGHTS": config.PARAMETERS[11]["default_value"],
+        "MODELS_COUNT": config.PARAMETERS[0]["default_value"],
+        "TEMPERATURE": config.PARAMETERS[1]["default_value"],
+        "MAX_LENGTH": config.PARAMETERS[2]["default_value"],
+        "MIN_LENGTH": config.PARAMETERS[3]["default_value"],
+        "TOP_K": config.PARAMETERS[4]["default_value"],
+        "NUM_BEAMS": config.PARAMETERS[5]["default_value"],
+        "BATCH_SIZE": config.PARAMETERS[6]["default_value"],
+        "EPOCHS": config.PARAMETERS[7]["default_value"],
+        "LEARNING_RATE": config.PARAMETERS[8]["default_value"],
+        "NUM_CLASSES": config.PARAMETERS[9]["default_value"],
+        "INPUT_SHAPE": config.PARAMETERS[10]["default_value"],
+        "NUM_BEAMS_GROUP": config.PARAMETERS[11]["default_value"],
+        "WEIGHTS": config.PARAMETERS[12]["default_value"],
     }
     print("weights: ", weights)
     print_menu()
@@ -106,6 +114,17 @@ def process_user_input(user_input, settings, models, tokenizers, translation_ser
 
     models, tokenizers = load_models(MODEL_NAMES["pretrained"] + MODEL_NAMES["mytrained"])
 
+#Cвежий блок добавлен для установки количества моделей.
+    if config.MODELS_COUNT == 1:
+        model, tokenizer = load_model(config.PRETRAINED_MODEL_PATHS["gpt_bigcode-santacoder"], "gpt_bigcode-santacoder")
+        response = generate_single_response(translated_input, model, tokenizer)
+        print("Используется только модель gpt_bigcode-santacoder")
+    else:
+        models_to_use = models[:settings["MODELS_COUNT"]]
+        tokenizers_to_use = tokenizers[:settings["MODELS_COUNT"]]
+        response = generate_ensemble_response(translated_input, models_to_use, tokenizers_to_use)
+
+#Проверка корректности текста
     cleaned_input = clean_text(user_input)
     print("cleaned_input: ", cleaned_input)
     if not validate_input(cleaned_input):

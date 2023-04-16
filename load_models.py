@@ -6,6 +6,7 @@ import transformers
 #from transformers import AutoTokenizer, AutoModelForCausalLM, MarianTokenizer, MarianMTModel, GPT2Tokenizer, GPTNeoForCausalLM
 from config import MODELS_PATH, PRETRAINED_MODEL_PATHS, MYTRAINED_MODEL_PATHS, MODEL_NAMES, ENCODER_MODEL_NAME, DECODER_MODEL_NAME, TRANSLATION_MODEL_NAME, BACK_TRANSLATION_MODEL_NAME, DEVICE, MODELS_URL
 from utils import is_file_available, download_models, is_model_available_locally
+#from user_interface import model_paths
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, MarianTokenizer, MarianMTModel, GPT2Tokenizer, GPTNeoForCausalLM, GPT2LMHeadModel
 
@@ -18,7 +19,7 @@ def load_model(model_name, model_paths):
         print(f"Model {model_name} not found in local storage. Downloading from Hugging Face Hub...")
         download_models(model_path.parent, [model_name], MODELS_URL)
 
-    if model_name == "EleutherAI/gpt-neo-2.7B":
+    elif model_name == "EleutherAI/gpt-neo-2.7B":
         model = GPTNeoForCausalLM.from_pretrained(model_path).to(DEVICE)
         tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     elif model_name == "gpt2":
@@ -32,9 +33,9 @@ def load_model(model_name, model_paths):
 
     return model, tokenizer
 
-def load_models(model_names_list, model_paths):
+def load_models(model_name_list, model_paths):
     models, tokenizers = [], []
-    for model_name in model_names_list:
+    for model_name in model_name_list:
         model, tokenizer = load_model(model_name, model_paths)
         models.append(model)
         tokenizers.append(tokenizer)

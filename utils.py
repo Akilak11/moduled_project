@@ -39,6 +39,8 @@ def get_model_files(base_url, model_name):
         print(f"Error getting model files: {e}")
         return []
 
+target_dir = config.MODELS_PATH
+
 def download_file(url, target_path):
 
     download_models(target_dir, MODEL_NAMES["pretrained"], models_url)
