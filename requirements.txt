@@ -132,7 +132,7 @@ pycocotools==2.0.6
 pycparser==2.21
 pydantic==1.10.7
 pyglet==2.0.5
-Pygments==2.14.0
+Pygments==2.15.0
 PyGObject==3.42.1
 PyJWT==2.6.0
 pyparsing==3.0.9
