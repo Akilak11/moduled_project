@@ -187,7 +187,7 @@ torch==2.0.0
 torchmetrics==0.11.4
 tqdm==4.65.0
 traceback2==1.4.0
-transformers==4.27.4
+transformers==4.36.0
 triton==2.0.0
 typeguard==3.0.2
 typing==3.7.4.3
